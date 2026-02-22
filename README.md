@@ -35,5 +35,12 @@ A Spring Boot REST API for managing Principal Member registrations as part of th
 1. **Clone the repository**:
    ```bash
    git clone <https://github.com/stevejj4/Member-Welfare-Backend.git>
+2. ### 🗄️ Database Access
+- **URL**: http://localhost:8080/h2-console
+- **JDBC URL**: jdbc:h2:mem:Learningdb
+- **User**: sa | **Password**: (blank)
+
+   
+
 
 
