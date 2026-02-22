@@ -1,6 +1,9 @@
 package com.SUNData.MemberApp.Model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "SUN_Member")
@@ -11,7 +14,9 @@ public class PrincipalMemberModel {
     private Long id;
 
     private String firstName;
-    private String LastName;
+    private String lastName;
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    private LocalDate dateOfBirth;
     private String nationalID;
     private String phoneNumber;
     private String groupName;
@@ -35,11 +40,11 @@ public class PrincipalMemberModel {
     }
 
     public String getLastName() {
-        return LastName;
+        return lastName;
     }
 
     public void setLastName(String lastName) {
-        LastName = lastName;
+        this.lastName = lastName;
     }
 
     public String getNationalID() {
@@ -64,5 +69,13 @@ public class PrincipalMemberModel {
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
     }
 }
