@@ -5,7 +5,6 @@ A Spring Boot REST API for managing Principal Member registrations as part of th
 ## 🚀 Features
 - **Register Members**: POST endpoint to save new member data.
 - **List Members**: GET endpoint to retrieve all registered members.
-- **Data Validation**: Custom logic to prevent future birth dates.
 - **In-Memory Storage**: Uses H2 Database for rapid assessment and testing.
 
 ## 🛠️ Tech Stack
@@ -23,4 +22,5 @@ A Spring Boot REST API for managing Principal Member registrations as part of th
 ## 🏃 Getting Started
 1. **Clone the repository**:
    ```bash
-   git clone <your-repo-url>
+   git clone <https://github.com/stevejj4/Member-Welfare-Backend.git>
+
