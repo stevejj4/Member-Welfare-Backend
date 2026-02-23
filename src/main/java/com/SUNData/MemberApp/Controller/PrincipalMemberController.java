@@ -19,11 +19,12 @@ public class PrincipalMemberController {
     }
 
     //GET /api/members
-    @GetMapping("/members")
+    @GetMapping("/member")
 
     public List<PrincipalMemberModel> getAllMembers() {
         return principalMemberService.getAllMembers();
     }
+    //@GetMapping("/member{id}")
 
     // POST /api/register
     @PostMapping("/register")
