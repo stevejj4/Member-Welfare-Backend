@@ -23,7 +23,7 @@ A Spring Boot REST API for managing Principal Member registrations as part of th
 - **Java 17**
 - **Spring Boot 3.4.2**
 - **Spring Data JPA** (Hibernate)
-- **H2 Database** (In-memory)
+- **Mysql database**
 - **Maven** (Build Tool)
 
 ## 📦 Prerequisites
@@ -36,11 +36,9 @@ A Spring Boot REST API for managing Principal Member registrations as part of th
    ```bash
    git clone <https://github.com/stevejj4/Member-Welfare-Backend.git>
 2. ### 🗄️ Database Access
-- **URL**: http://localhost:8080/h2-console
-- **JDBC URL**: jdbc:h2:mem:Learningdb
-- **User**: sa | **Password**: (blank)
 
    
+
 
 
 
