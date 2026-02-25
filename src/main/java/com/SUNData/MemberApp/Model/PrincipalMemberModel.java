@@ -21,7 +21,12 @@ public class PrincipalMemberModel {
     private String phoneNumber;
     private String groupName;
 
+    //One-to-one relationship
+    @OneToOne(mappedBy = "principalMember", cascade = CascadeType.ALL)
+    private NextOfKinModel nextOfKin;
+
     public PrincipalMemberModel(){}
+
 
     public Long getId() {
         return id;
