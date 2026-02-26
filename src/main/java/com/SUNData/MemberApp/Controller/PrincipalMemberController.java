@@ -1,6 +1,11 @@
 package com.SUNData.MemberApp.Controller;
 
+import com.SUNData.MemberApp.DTOs.MemberDetailsDTO;
+import com.SUNData.MemberApp.DTOs.NextOfKinDTO;
+import com.SUNData.MemberApp.DTOs.PrincipalMemberDTO;
+import com.SUNData.MemberApp.Model.NextOfKinModel;
 import com.SUNData.MemberApp.Model.PrincipalMemberModel;
+import com.SUNData.MemberApp.Service.NextOfKinService;
 import com.SUNData.MemberApp.Service.PrincipalMemberService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +18,11 @@ import java.util.List;
 public class PrincipalMemberController {
 
     private final PrincipalMemberService principalMemberService;
+    private final NextOfKinService nextOfKinService;
 
-    public PrincipalMemberController(PrincipalMemberService principalMemberService) {
+    public PrincipalMemberController(PrincipalMemberService principalMemberService, NextOfKinService nextOfKinService) {
         this.principalMemberService = principalMemberService;
+        this.nextOfKinService = nextOfKinService;
     }
 
     // GET all members
@@ -25,12 +32,22 @@ public class PrincipalMemberController {
     }
 
     // GET member by ID
-    @GetMapping("/{id}")
-    public ResponseEntity<PrincipalMemberModel> getMemberById(@PathVariable Long id) {
-        return principalMemberService.getMemberById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+
+    @GetMapping("/{id}/details")
+    public ResponseEntity<MemberDetailsDTO> getMemberDetails(@PathVariable Long id) {
+        PrincipalMemberModel member = principalMemberService.getMemberById(id)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+
+        List<NextOfKinDTO> kinDTOs = nextOfKinService.getNextOfKinByPrincipalMember(id)
+                .stream()
+                .map(NextOfKinDTO::new)
+                .toList();
+
+        MemberDetailsDTO dto = new MemberDetailsDTO(new PrincipalMemberDTO(member), kinDTOs);
+        return ResponseEntity.ok(dto);
     }
+
+
 
     // POST register new member
     @PostMapping

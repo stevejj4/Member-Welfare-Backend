@@ -17,7 +17,7 @@ public class NextOfKinController {
     public NextOfKinController(NextOfKinService nextOfKinService) {
         this.nextOfKinService = nextOfKinService;
     }
-
+    // not a business should not be in the UI
     @GetMapping
     public List<NextOfKinModel> getAllNextOfKin() {
         return nextOfKinService.getAllNextOfKin();
