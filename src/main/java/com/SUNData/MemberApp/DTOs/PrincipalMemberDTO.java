@@ -1,6 +1,5 @@
 package com.SUNData.MemberApp.DTOs;
 
-
 import com.SUNData.MemberApp.Model.PrincipalMemberModel;
 
 public class PrincipalMemberDTO {

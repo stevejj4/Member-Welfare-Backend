@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/member")
+@RequestMapping("/api")
 public class PrincipalMemberController {
 
     private final PrincipalMemberService principalMemberService;
@@ -31,7 +31,7 @@ public class PrincipalMemberController {
         return principalMemberService.getAllMembers();
     }
 
-    // GET member by ID
+    // GET member details by ID
 
     @GetMapping("/{id}/details")
     public ResponseEntity<MemberDetailsDTO> getMemberDetails(@PathVariable Long id) {
@@ -47,10 +47,8 @@ public class PrincipalMemberController {
         return ResponseEntity.ok(dto);
     }
 
-
-
     // POST register new member
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<PrincipalMemberModel> registerMember(@RequestBody PrincipalMemberModel memberData) {
         PrincipalMemberModel saved = principalMemberService.addMember(memberData);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);

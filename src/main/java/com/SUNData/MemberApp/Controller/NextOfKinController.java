@@ -17,23 +17,6 @@ public class NextOfKinController {
     public NextOfKinController(NextOfKinService nextOfKinService) {
         this.nextOfKinService = nextOfKinService;
     }
-    // not a business should not be in the UI
-    @GetMapping
-    public List<NextOfKinModel> getAllNextOfKin() {
-        return nextOfKinService.getAllNextOfKin();
-    }
-
-    @GetMapping("/principal/{principalId}")
-    public List<NextOfKinModel> getNextOfKinByPrincipal(@PathVariable Long principalId) {
-        return nextOfKinService.getNextOfKinByPrincipalMember(principalId);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<NextOfKinModel> getNextOfKinById(@PathVariable Long id) {
-        return nextOfKinService.getNextOfKinById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
 
     @PostMapping
     public ResponseEntity<NextOfKinModel> addNextOfKin(@RequestBody NextOfKinModel nextOfKin) {

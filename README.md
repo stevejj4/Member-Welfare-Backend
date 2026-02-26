@@ -5,7 +5,8 @@ A Spring Boot REST API for managing Principal Member registrations as part of th
 ## 🚀 Features
 - **Register Members**: POST endpoint to save new member data.
 - **List Members**: GET endpoint to retrieve all registered members.
-- **In-Memory Storage**: Uses H2 Database for rapid assessment and testing.
+- **List Member, next of Kin, dependants**: GET endpoint to retrieve member complete details
+- **Data storage**: MySQL for data parsistance.
 
 ## 🔌 REST API Endpoints
 ### 1. Register a Member
