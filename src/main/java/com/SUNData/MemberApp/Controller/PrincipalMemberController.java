@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/members")
 public class PrincipalMemberController {
 
     private final PrincipalMemberService principalMemberService;
@@ -39,7 +39,7 @@ public class PrincipalMemberController {
 
     // GET member details by ID
 
-    @GetMapping("/{id}/details")
+    @GetMapping("/{id}")
     public ResponseEntity<MemberDetailsDTO> getMemberDetails(@PathVariable Long id) {
         PrincipalMemberModel member = principalMemberService.getMemberById(id)
                 .orElseThrow(() -> new RuntimeException("Member not found"));
@@ -63,7 +63,7 @@ public class PrincipalMemberController {
     }
 
     // PUT update member
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/edit")
     public ResponseEntity<PrincipalMemberModel> updateMember(@PathVariable Long id,
                                                              @RequestBody PrincipalMemberModel updated) {
         PrincipalMemberModel saved = principalMemberService.updateMember(id, updated);
@@ -71,7 +71,7 @@ public class PrincipalMemberController {
     }
 
     // DELETE member
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/deleting")
     public ResponseEntity<Void> deleteMember(@PathVariable Long id) {
         principalMemberService.deleteMember(id);
         return ResponseEntity.noContent().build();
