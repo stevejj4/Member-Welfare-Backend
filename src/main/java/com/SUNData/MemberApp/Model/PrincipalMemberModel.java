@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "principal_member")
@@ -24,9 +25,14 @@ public class PrincipalMemberModel {
     //One-to-one relationship
     @OneToOne(mappedBy = "principalMember", cascade = CascadeType.ALL)
     private NextOfKinModel nextOfKin;
+    @OneToMany(mappedBy = "principalMember", cascade = CascadeType.ALL)
+    private List<DependantModel> dependants;
 
     public PrincipalMemberModel(){}
 
+    public PrincipalMemberModel(Long id) {
+        this.id = id;
+    }
 
     public Long getId() {
         return id;
