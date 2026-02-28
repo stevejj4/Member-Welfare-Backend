@@ -19,6 +19,10 @@ A Spring Boot REST API for managing Principal Member registrations as part of th
 **Method:** `GET`  
 **Description:** Get all Principal Members in the `SUN_Member` table.
 
+***URL:**`http://localhost:8080/api/{principal_member_id}`
+***Memthod:** `GET`
+**Description:** Get individual Principal Members in the `from all tables` table.
+
 
 ## 🛠️ Tech Stack
 - **Java 17**
@@ -39,6 +43,7 @@ A Spring Boot REST API for managing Principal Member registrations as part of th
 2. ### 🗄️ Database Access
 
    
+
 
 
 
