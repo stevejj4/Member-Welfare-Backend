@@ -26,8 +26,8 @@ public class DependantService {
             throw new IllegalStateException("A principal member can have at most 6 dependants");
         }
 
-        if (!List.of("Son", "Daughter", "Spouse", "Parent").contains(dependant.getRelationship())) {
-            throw new IllegalArgumentException("Relationship must be Son, Daughter, Spouse, or Parent");
+        if (!List.of("Son", "Daughter", "Spouse").contains(dependant.getRelationship())) {
+            throw new IllegalArgumentException("Relationship must be Son, Daughter, Spouse");
         }
 
         dependant.setPrincipalMember(new PrincipalMemberModel(memberId));

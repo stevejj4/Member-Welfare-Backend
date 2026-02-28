@@ -76,12 +76,14 @@ public class PrincipalMemberController {
         principalMemberService.deleteMember(id);
         return ResponseEntity.noContent().build();
     }
+
     @PostMapping("/{memberId}/dependants")
     public ResponseEntity<DependantDTO> addDependant(@PathVariable Long memberId,
                                                      @Valid @RequestBody DependantModel dependant) {
         DependantModel saved = dependantService.addDependant(memberId, dependant);
         return ResponseEntity.status(HttpStatus.CREATED).body(new DependantDTO(saved));
     }
+
     @PutMapping("/{memberId}/dependants/{dependantId}")
     public ResponseEntity<DependantDTO> updateDependant(@PathVariable Long memberId,
                                                         @PathVariable Long dependantId,
@@ -89,21 +91,19 @@ public class PrincipalMemberController {
         DependantModel updated = dependantService.updateDependant(dependantId, dependant);
         return ResponseEntity.ok(new DependantDTO(updated));
     }
+
     @DeleteMapping("/{memberId}/dependants/{dependantId}")
     public ResponseEntity<Void> deleteDependant(@PathVariable Long memberId,
                                                 @PathVariable Long dependantId) {
         dependantService.deleteDependant(dependantId);
         return ResponseEntity.noContent().build();
     }
+
     @GetMapping("/{memberId}/dependants")
     public ResponseEntity<List<DependantDTO>> getDependants(@PathVariable Long memberId) {
         List<DependantDTO> dependants = dependantService.getDependantsByPrincipalMember(memberId)
                 .stream().map(DependantDTO::new).toList();
         return ResponseEntity.ok(dependants);
     }
-
-
-
-
 
 }
