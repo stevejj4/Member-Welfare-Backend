@@ -22,10 +22,6 @@ public class NextOfKinService {
         this.nextOfKinRepository = nextOfKinRepository;
         this.principalMemberRepository = principalMemberRepository;
     }
-    // Displayed in the UI
-    public List<NextOfKinModel> getAllNextOfKin() {
-        return nextOfKinRepository.findAll();
-    }
 
     public List<NextOfKinModel> getNextOfKinByPrincipalMember(Long principalMemberId) {
         return nextOfKinRepository.findByPrincipalMemberId(principalMemberId);

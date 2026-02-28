@@ -38,6 +38,8 @@ public class PrincipalMemberController {
     }
 
     // GET member details by ID
+    //  makes three separate database calls -- PM, Nok & Dept
+    // used DTO to resent what is important and data privacy
 
     @GetMapping("/{id}")
     public ResponseEntity<MemberDetailsDTO> getMemberDetails(@PathVariable Long id) {
