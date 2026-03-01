@@ -12,9 +12,14 @@ public class NextOfKinDTO {
     private String relationship;
     private String idNumber;
     private String phoneNumber;
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate dateOfBirth;
     private String idAttachmentPath;
 
+    // Default constructor for Jackson
+    public NextOfKinDTO() {}
+
+    // Entity → DTO constructor
     public NextOfKinDTO(NextOfKinModel model) {
         this.id = model.getId();
         this.firstName = model.getFirstName();
@@ -26,29 +31,27 @@ public class NextOfKinDTO {
         this.idAttachmentPath = model.getIdAttachmentPath();
     }
 
-    // getters only
+    // getters
+    public Long getId() { return id; }
+    public String getFirstName() { return firstName; }
+    public String getLastName() { return lastName; }
+    public String getRelationship() { return relationship; }
+    public String getIdNumber() { return idNumber; }
+    public String getPhoneNumber() { return phoneNumber; }
+    public LocalDate getDateOfBirth() { return dateOfBirth; }
+    public String getIdAttachmentPath() { return idAttachmentPath; }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getRelationship() {
-        return relationship;
-    }
-
-    public String getIdNumber() {
-        return idNumber;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
+    // Convert DTO back to entity
+    public NextOfKinModel toEntity() {
+        NextOfKinModel model = new NextOfKinModel();
+        if (this.id != null) model.setId(this.id);
+        model.setFirstName(this.firstName);
+        model.setLastName(this.lastName);
+        model.setRelationship(this.relationship);
+        model.setIdNumber(this.idNumber);
+        model.setPhoneNumber(this.phoneNumber);
+        model.setDateOfBirth(this.dateOfBirth);
+        model.setIdAttachmentPath(this.idAttachmentPath);
+        return model;
     }
 }

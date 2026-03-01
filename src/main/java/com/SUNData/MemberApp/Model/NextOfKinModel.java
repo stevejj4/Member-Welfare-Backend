@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "next_of_kin")
@@ -22,8 +23,8 @@ public class NextOfKinModel {
     @Column(nullable = false)
     private String relationship; // e.g., spouse, sibling, parent
 
-    @Column(nullable = false, unique = true)
-    private String idNumber;
+    @Column(nullable = false)
+    private String idNumber; // removed unique constraint to allow sharing
 
     private String phoneNumber;
 
@@ -33,11 +34,9 @@ public class NextOfKinModel {
     // Option 1: store file path
     private String idAttachmentPath;
 
-
-    // Relationship with Principal Member
-    @OneToOne
-    @JoinColumn(name = "principal_member_id", nullable = false, unique = true)
-    private PrincipalMemberModel principalMember;
+    // Relationship with Principal Members (shared Next of Kin)
+    @OneToMany(mappedBy = "nextOfKin", cascade = CascadeType.ALL)
+    private List<PrincipalMemberModel> principalMembers;
 
     public NextOfKinModel() {}
 
@@ -66,6 +65,6 @@ public class NextOfKinModel {
     public String getIdAttachmentPath() { return idAttachmentPath; }
     public void setIdAttachmentPath(String idAttachmentPath) { this.idAttachmentPath = idAttachmentPath; }
 
-    public PrincipalMemberModel getPrincipalMember() { return principalMember; }
-    public void setPrincipalMember(PrincipalMemberModel principalMember) { this.principalMember = principalMember; }
+    public List<PrincipalMemberModel> getPrincipalMembers() { return principalMembers; }
+    public void setPrincipalMembers(List<PrincipalMemberModel> principalMembers) { this.principalMembers = principalMembers; }
 }
