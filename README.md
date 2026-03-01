@@ -10,7 +10,7 @@ A Spring Boot REST API for managing Principal Member registrations as part of th
 
 ## 🔌 REST API Endpoints
 ### 1. Register a Member
-**URL:** `http://localhost:8080/api/register`  
+**URL:** `http://localhost:8080/api/members/register`  
 **Method:** `POST`  
 **Description:** Creates a new Principal Member in the `SUN_Member` table.
 
@@ -43,6 +43,7 @@ A Spring Boot REST API for managing Principal Member registrations as part of th
 2. ### 🗄️ Database Access
 
    
+
 
 
 
