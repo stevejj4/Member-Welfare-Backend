@@ -35,7 +35,8 @@ public class NextOfKinModel {
     private String idAttachmentPath;
 
     // Relationship with Principal Members (shared Next of Kin)
-    @OneToMany(mappedBy = "nextOfKin", cascade = CascadeType.ALL)
+    // orphanRemoval = true -- ensures principal member removal, nextOfKin is also removed
+    @OneToMany(mappedBy = "nextOfKin", orphanRemoval = true)
     private List<PrincipalMemberModel> principalMembers;
 
     public NextOfKinModel() {}

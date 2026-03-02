@@ -31,7 +31,7 @@ public class PrincipalMemberModel {
     private String groupName;
 
     // Each principal member has exactly one next of kin
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "next_of_kin_id", nullable = false)
     private NextOfKinModel nextOfKin;
 
