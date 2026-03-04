@@ -8,6 +8,7 @@ A Spring Boot REST API for managing Principal Member registrations as part of th
 - **List Member, next of Kin, dependants**: GET endpoint to retrieve member complete details
 - **Aggregate PMservice that orchestrates the business rule**
 - **Data storage**: MySQL for data parsistance.
+- **DTOs for data protection**
 
 ## 🔌 REST API Endpoints
 ### 1. Register a Member
@@ -45,6 +46,7 @@ A Spring Boot REST API for managing Principal Member registrations as part of th
 2. ### 🗄️ Database Access
 
    
+
 
 
 
