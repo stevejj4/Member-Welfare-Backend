@@ -38,6 +38,7 @@ A Spring Boot REST API for managing Principal Member registrations as part of th
 - **Maven**
 - **Postman** (for API testing)
 - **MySQL** (Data parsistance)
+- **JPA**
 
 ## 🏃 Getting Started
 1. **Clone the repository**:
@@ -46,6 +47,7 @@ A Spring Boot REST API for managing Principal Member registrations as part of th
 2. ### 🗄️ Database Access
 
    
+
 
 
 
