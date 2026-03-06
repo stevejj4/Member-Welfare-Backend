@@ -3,7 +3,7 @@
 A Spring Boot REST API for managing Principal Member registrations as part of the SUN Data system.
 
 ## 🚀 Features
-- **Register Members**: POST endpoint to save new member data.
+- **Register Members**: POST endpoint to save new member data and update member info
 - **List Members**: GET endpoint to retrieve all registered members.
 - **List Member, next of Kin, dependants**: GET endpoint to retrieve member complete details
 - **Aggregate PMservice that orchestrates the business rule**
@@ -46,6 +46,7 @@ A Spring Boot REST API for managing Principal Member registrations as part of th
 2. ### 🗄️ Database Access
 
    
+
 
 
 
