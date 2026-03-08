@@ -42,14 +42,6 @@ public class PrincipalMemberController {
         return ResponseEntity.ok(principalMemberService.getFullMemberDetails(id));
     }
 
-    /** When user wants to update full details of Principal Member */
-    @PutMapping("/{id}")
-    public ResponseEntity<PrincipalMemberDTO> updatePrincipal(
-            @PathVariable Long id,
-            @Valid @RequestBody PrincipalMemberDTO dto) {
-        return ResponseEntity.ok(principalMemberService.updatePrincipal(id, dto));
-    }
-
     /** Partial update of Principal Member (PATCH-style) */
     @PatchMapping("/{id}")
     public ResponseEntity<PrincipalMemberDTO> patchPrincipal(
