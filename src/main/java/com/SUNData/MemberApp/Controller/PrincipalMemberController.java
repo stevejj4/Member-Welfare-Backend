@@ -42,7 +42,7 @@ public class PrincipalMemberController {
         return ResponseEntity.ok(principalMemberService.getFullMemberDetails(id));
     }
 
-    /** Full update of Principal Member (PUT-style) */
+    /** When user wants to update full details of Principal Member */
     @PutMapping("/{id}")
     public ResponseEntity<PrincipalMemberDTO> updatePrincipal(
             @PathVariable Long id,

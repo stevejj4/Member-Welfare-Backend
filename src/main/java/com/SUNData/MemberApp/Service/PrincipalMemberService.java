@@ -12,7 +12,6 @@ import java.util.List;
  * Service layer for managing Principal Members and their aggregate:
  * - Next of Kin (mandatory, lifecycle tied to Principal Member)
  * - Dependants (optional, max 6, lifecycle tied to Principal Member)
- *
  * This class enforces business rules and ensures all operations
  * on NextOfKin and Dependants are scoped through the Principal Member.
  */
