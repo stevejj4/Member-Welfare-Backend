@@ -12,7 +12,7 @@ public class PrincipalMemberDTO {
     private String nationalID;
     private String phoneNumber;
     private String groupName;
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "dd-MM-yyyy") // Kenya date format for better UX
     private LocalDate dateOfBirth;
 
 
