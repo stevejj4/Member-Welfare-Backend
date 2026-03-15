@@ -36,6 +36,7 @@ public class PrincipalMemberController {
     /**
      * Get full details of a Principal Member,
      * including Next of Kin and Dependants.
+     * data as defined in the memberDetailDTO
      */
     @GetMapping("/{id}")
     public ResponseEntity<MemberDetailsDTO> getMemberDetails(@PathVariable Long id) {

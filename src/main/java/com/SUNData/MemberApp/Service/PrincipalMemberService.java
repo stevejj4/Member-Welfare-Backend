@@ -32,6 +32,10 @@ public class PrincipalMemberService {
     }
 
     // ----------------- Helper Methods -----------------
+    /**
+    * to keep the code DRY
+     * code reuse
+     */
 
     /** Fetch Principal Member or throw if not found */
     private PrincipalMemberModel getPrincipalOrThrow(Long id) {
