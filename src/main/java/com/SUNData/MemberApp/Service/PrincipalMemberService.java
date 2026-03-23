@@ -30,12 +30,12 @@ public class PrincipalMemberService {
         this.nextOfKinRepo = nextOfKinRepo;
         this.dependantRepo = dependantRepo;
     }
-
-    // ----------------- Helper Methods -----------------
     /**
-    * to keep the code DRY
+     * to keep the code DRY
      * code reuse
      */
+
+    // ----------------- Helper Methods -----------------
 
     /** Fetch Principal Member or throw if not found */
     private PrincipalMemberModel getPrincipalOrThrow(Long id) {

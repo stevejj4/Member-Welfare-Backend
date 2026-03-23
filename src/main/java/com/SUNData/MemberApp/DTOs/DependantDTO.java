@@ -2,17 +2,31 @@ package com.SUNData.MemberApp.DTOs;
 
 import com.SUNData.MemberApp.Model.DependantModel;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 import java.time.LocalDate;
 
 public class DependantDTO {
     private Long id;
+    @NotBlank(message = "First name is required")
     private String firstName;
+
+    @NotBlank(message = "Last name is required")
     private String lastName;
+
+    @NotBlank(message = "Date of birth is required")
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate dateOfBirth;
-    private String relationship;
-    private String gender;
+
+    @NotBlank(message = "Relationship is required")
+    private String relationship; // Later: I will replace with DependantRelationship enum
+
+    @NotBlank(message = "Gender is required")
+    private String gender; // Later: I will replace with GenderType enum
+
+    // phone number is optional: will be validated if present
+    @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be 10 digits")
     private String phoneNumber;
     private String birthCertificatePath;
 

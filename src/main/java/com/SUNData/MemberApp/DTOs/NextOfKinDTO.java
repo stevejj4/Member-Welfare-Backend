@@ -2,18 +2,34 @@ package com.SUNData.MemberApp.DTOs;
 
 import com.SUNData.MemberApp.Model.NextOfKinModel;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 import java.time.LocalDate;
 
 public class NextOfKinDTO {
     private Long id;
+
+    @NotBlank(message = "First name is required")
     private String firstName;
+
+    @NotBlank(message = "Last name is required")
     private String lastName;
+
+    @NotBlank(message = "Relationship is required")
     private String relationship;
+
+    @NotBlank(message = "National ID is required")
     private String idNumber;
+
+    @NotBlank(message = "Principal member must have phone number")
+    @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be 10 digits")
     private String phoneNumber;
+
+    @NotBlank(message = "Date of birth is required")
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate dateOfBirth;
+
     private String idAttachmentPath;
 
     // Default constructor for Jackson
