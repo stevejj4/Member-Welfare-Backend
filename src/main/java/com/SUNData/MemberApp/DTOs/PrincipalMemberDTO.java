@@ -2,16 +2,29 @@ package com.SUNData.MemberApp.DTOs;
 
 import com.SUNData.MemberApp.Model.PrincipalMemberModel;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 import java.time.LocalDate;
 
 public class PrincipalMemberDTO {
     private Long id;
+
+    @NotBlank(message = "First name is required")
     private String firstName;
+
+    @NotBlank(message = "Last name is required")
     private String lastName;
+
+    @NotBlank(message = "National ID is required")
     private String nationalID;
+
+    @NotBlank(message = "Principal member must have a phone number")
+    @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be 10 digits")
     private String phoneNumber;
+
     private String groupName;
+    @NotBlank(message = "Principal member must have date of birth")
     @JsonFormat(pattern = "dd-MM-yyyy") // Kenya date format for better UX
     private LocalDate dateOfBirth;
 

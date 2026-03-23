@@ -17,12 +17,12 @@ public class NextOfKinDTO {
     private String lastName;
 
     @NotBlank(message = "Relationship is required")
-    private String relationship;
+    private String relationship; // Later: I will replace with NextOfKinRelationship enum
 
     @NotBlank(message = "National ID is required")
     private String idNumber;
 
-    @NotBlank(message = "Principal member must have phone number")
+    @NotBlank(message = "Next of kin must have phone number")
     @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be 10 digits")
     private String phoneNumber;
 
