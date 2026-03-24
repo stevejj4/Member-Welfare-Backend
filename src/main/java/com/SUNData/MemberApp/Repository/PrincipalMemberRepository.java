@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface PrincipalMemberRepository extends JpaRepository<PrincipalMemberModel, Long> {
-
-    Optional<PrincipalMemberModel> findById(Long id);
-
+    boolean existsByNationalID(String nationalID);
+    boolean existsByPhoneNumber(String phoneNumber);
 }

@@ -3,6 +3,7 @@ package com.SUNData.MemberApp.DTOs;
 import com.SUNData.MemberApp.Model.PrincipalMemberModel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 import java.time.LocalDate;
@@ -24,7 +25,7 @@ public class PrincipalMemberDTO {
     private String phoneNumber;
 
     private String groupName;
-    @NotBlank(message = "Principal member must have date of birth")
+    @NotNull(message = "Principal member must have date of birth")
     @JsonFormat(pattern = "dd-MM-yyyy") // Kenya date format for better UX
     private LocalDate dateOfBirth;
 

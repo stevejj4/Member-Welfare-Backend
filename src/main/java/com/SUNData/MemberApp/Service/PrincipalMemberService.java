@@ -1,6 +1,7 @@
 package com.SUNData.MemberApp.Service;
 
 import com.SUNData.MemberApp.DTOs.*;
+import com.SUNData.MemberApp.Exceptions.ValidationException;
 import com.SUNData.MemberApp.Model.*;
 import com.SUNData.MemberApp.Repository.*;
 import jakarta.transaction.Transactional;
@@ -99,10 +100,20 @@ public class PrincipalMemberService {
      */
     @Transactional
     public MemberDetailsDTO registerFullMember(RegisterMemberRequestDTO request) {
-        PrincipalMemberModel principal = request.getPrincipal().toEntity();
+        PrincipalMemberDTO dto = request.getPrincipal();
+
+        // Check for duplicates
+        if (principalRepo.existsByNationalID(dto.getNationalID())) {
+            throw new ValidationException("National ID already exists");
+        }
+        if (principalRepo.existsByPhoneNumber(dto.getPhoneNumber())) {
+            throw new ValidationException("Phone number already exists");
+        }
+
+        PrincipalMemberModel principal = dto.toEntity();
 
         if (request.getNextOfKin() == null) {
-            throw new IllegalArgumentException("Next Of Kin is mandatory");
+            throw new ValidationException("Next Of Kin is mandatory");
         }
         NextOfKinModel kin = request.getNextOfKin().toEntity();
         principal.setNextOfKin(kin);
@@ -111,10 +122,10 @@ public class PrincipalMemberService {
 
         if (request.getDependants() != null) {
             if (request.getDependants().size() > 6) {
-                throw new IllegalStateException("Maximum 6 dependants allowed");
+                throw new ValidationException("Maximum 6 dependants allowed");
             }
-            for (DependantDTO dto : request.getDependants()) {
-                DependantModel dependant = dto.toEntity();
+            for (DependantDTO depDto : request.getDependants()) {
+                DependantModel dependant = depDto.toEntity();
                 dependant.setPrincipalMember(savedPrincipal);
                 dependantRepo.save(dependant);
             }
