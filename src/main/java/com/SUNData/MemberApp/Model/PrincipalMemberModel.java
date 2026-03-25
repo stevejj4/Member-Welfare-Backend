@@ -17,6 +17,7 @@ public class PrincipalMemberModel {
     @Column(nullable = false)
     private String firstName;
 
+    @Column(nullable = false)
     private String lastName;
 
     @JsonFormat(pattern = "dd-MM-yyyy")
@@ -25,7 +26,7 @@ public class PrincipalMemberModel {
     @Column(nullable = false, unique = true) // enforce uniqueness for national ID
     private String nationalID;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String phoneNumber;
 
     private String groupName;

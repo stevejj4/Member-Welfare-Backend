@@ -1,5 +1,6 @@
 package com.SUNData.MemberApp.DTOs;
 
+import com.SUNData.MemberApp.Enums.NextOfKinRelationship;
 import com.SUNData.MemberApp.Model.NextOfKinModel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
@@ -17,15 +18,15 @@ public class NextOfKinDTO {
     @NotBlank(message = "Last name is required")
     private String lastName;
 
-    @NotBlank(message = "Relationship is required")
-    private String relationship; // Later: I will replace with NextOfKinRelationship enum
-
     @NotBlank(message = "National ID is required")
     private String idNumber;
 
     @NotBlank(message = "Next of kin must have phone number")
     @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be 10 digits")
     private String phoneNumber;
+
+    @NotNull(message = "Relationship is required")
+    private NextOfKinRelationship relationship;
 
     @NotNull(message = "Date of birth is required")
     @JsonFormat(pattern = "dd-MM-yyyy")
@@ -41,7 +42,7 @@ public class NextOfKinDTO {
         this.id = model.getId();
         this.firstName = model.getFirstName();
         this.lastName = model.getLastName();
-        this.relationship = model.getRelationship();
+        this.relationship = NextOfKinRelationship.valueOf(model.getRelationship());
         this.idNumber = model.getIdNumber();
         this.phoneNumber = model.getPhoneNumber();
         this.dateOfBirth = model.getDateOfBirth();
@@ -52,7 +53,7 @@ public class NextOfKinDTO {
     public Long getId() { return id; }
     public String getFirstName() { return firstName; }
     public String getLastName() { return lastName; }
-    public String getRelationship() { return relationship; }
+    public String getRelationship() { return String.valueOf(relationship); }
     public String getIdNumber() { return idNumber; }
     public String getPhoneNumber() { return phoneNumber; }
     public LocalDate getDateOfBirth() { return dateOfBirth; }
@@ -64,7 +65,7 @@ public class NextOfKinDTO {
         if (this.id != null) model.setId(this.id);
         model.setFirstName(this.firstName);
         model.setLastName(this.lastName);
-        model.setRelationship(this.relationship);
+        model.setRelationship(String.valueOf(this.relationship));
         model.setIdNumber(this.idNumber);
         model.setPhoneNumber(this.phoneNumber);
         model.setDateOfBirth(this.dateOfBirth);

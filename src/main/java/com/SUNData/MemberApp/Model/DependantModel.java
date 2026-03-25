@@ -1,12 +1,11 @@
 package com.SUNData.MemberApp.Model;
 
+import com.SUNData.MemberApp.Enums.DependantRelationship;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 
 import java.time.LocalDate;
@@ -82,8 +81,8 @@ public class DependantModel {
         return relationship;
     }
 
-    public void setRelationship(@NotBlank String relationship) {
-        this.relationship = relationship;
+    public void setRelationship(@NotNull DependantRelationship relationship) {
+        this.relationship = String.valueOf(relationship);
     }
 
     public @NotBlank String getGender() {
