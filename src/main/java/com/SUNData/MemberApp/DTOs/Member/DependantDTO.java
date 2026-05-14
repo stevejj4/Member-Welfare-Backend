@@ -1,7 +1,6 @@
-package com.SUNData.MemberApp.DTOs;
+package com.SUNData.MemberApp.DTOs.Member;
 
-import com.SUNData.MemberApp.Enums.DependantRelationship;
-import com.SUNData.MemberApp.Model.DependantModel;
+import com.SUNData.MemberApp.Model.MemberModel.DependantModel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -18,19 +17,19 @@ public class DependantDTO {
     private String lastName;
 
     @NotNull(message = "Date of birth is required")
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
 
     @NotBlank(message = "Gender is required")
     private String gender; // Later: I will replace with GenderType enum
 
     @NotNull(message = "Relationship is required")
-    private DependantRelationship relationship;
-
+    private String relationship;
 
     // phone number is optional: will be validated if present
     @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be 10 digits")
     private String phoneNumber;
+
     private String birthCertificatePath;
 
     public DependantDTO(){}
@@ -40,7 +39,7 @@ public class DependantDTO {
         this.firstName = model.getFirstName();
         this.lastName = model.getLastName();
         this.dateOfBirth = model.getDateOfBirth();
-        this.relationship = DependantRelationship.valueOf(model.getRelationship());
+        this.relationship = model.getRelationship();
         this.gender = model.getGender();
         this.phoneNumber = model.getPhoneNumber();
         this.birthCertificatePath = model.getBirthCertificatePath();
@@ -51,7 +50,11 @@ public class DependantDTO {
     public String getFirstName() { return firstName; }
     public String getLastName() { return lastName; }
     public LocalDate getDateOfBirth() { return dateOfBirth; }
-    public DependantRelationship getRelationship() { return relationship; }
+
+    public @NotNull(message = "Relationship is required") String getRelationship() {
+        return relationship;
+    }
+
     public String getGender() { return gender; }
     public String getPhoneNumber() { return phoneNumber; }
     public String getBirthCertificatePath() { return birthCertificatePath; }
@@ -74,4 +77,5 @@ public class DependantDTO {
 
         return model;
     }
+
 }

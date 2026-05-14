@@ -1,10 +1,19 @@
-package com.SUNData.MemberApp.DTOs;
+package com.SUNData.MemberApp.DTOs.Member;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.web.client.RestClient;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+
 
 public class RegisterMemberRequestDTO {
 

@@ -1,17 +1,13 @@
-package com.SUNData.MemberApp.DTOs;
-
-import com.SUNData.MemberApp.Model.NextOfKinModel;
-import com.SUNData.MemberApp.Model.PrincipalMemberModel;
-import com.SUNData.MemberApp.Model.DependantModel;
+package com.SUNData.MemberApp.DTOs.Member;
 
 import java.util.List;
 
 public class MemberDetailsDTO {
     private PrincipalMemberDTO member;
-    private List<NextOfKinDTO> nextOfKin;
+    private NextOfKinDTO nextOfKin;
     private List<DependantDTO> dependants;
 
-    public MemberDetailsDTO(PrincipalMemberDTO member, List<NextOfKinDTO> nextOfKin, List<DependantDTO> dependants) {
+    public MemberDetailsDTO(PrincipalMemberDTO member, NextOfKinDTO nextOfKin, List<DependantDTO> dependants) {
         this.member = member;
         this.nextOfKin = nextOfKin;
         this.dependants = dependants;
@@ -23,7 +19,7 @@ public class MemberDetailsDTO {
         return member;
     }
 
-    public List<NextOfKinDTO> getNextOfKin() {
+    public NextOfKinDTO getNextOfKin() {
         return nextOfKin;
     }
 

@@ -1,4 +1,4 @@
-package com.SUNData.MemberApp.Model;
+package com.SUNData.MemberApp.Model.MemberModel;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
@@ -20,7 +20,7 @@ public class PrincipalMemberModel {
     @Column(nullable = false)
     private String lastName;
 
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
 
     @Column(nullable = false, unique = true) // enforce uniqueness for national ID

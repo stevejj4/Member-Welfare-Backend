@@ -1,11 +1,16 @@
 package com.SUNData.MemberApp.Service;
 
-import com.SUNData.MemberApp.DTOs.*;
+import com.SUNData.MemberApp.DTOs.Member.*;
+import com.SUNData.MemberApp.Exceptions.ResourceNotFoundException;
 import com.SUNData.MemberApp.Exceptions.ValidationException;
-import com.SUNData.MemberApp.Model.*;
+import com.SUNData.MemberApp.Model.MemberModel.DependantModel;
+import com.SUNData.MemberApp.Model.MemberModel.NextOfKinModel;
+import com.SUNData.MemberApp.Model.MemberModel.PrincipalMemberModel;
 import com.SUNData.MemberApp.Repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -22,6 +27,9 @@ public class PrincipalMemberService {
     private final PrincipalMemberRepository principalRepo;
     private final NextOfKinRepository nextOfKinRepo;
     private final DependantRepository dependantRepo;
+
+    private static final Logger log = LoggerFactory.getLogger(PrincipalMemberService.class);
+
 
     public PrincipalMemberService(
             PrincipalMemberRepository principalRepo,
@@ -41,19 +49,26 @@ public class PrincipalMemberService {
     /** Fetch Principal Member or throw if not found */
     private PrincipalMemberModel getPrincipalOrThrow(Long id) {
         return principalRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Principal Member not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Principal Member not found: " +id));
+    }
+    /** Fetch by BUSINESS KEY (National ID) */
+    private PrincipalMemberModel getPrincipalByNationalIdOrThrow(String nationalId) {
+        return principalRepo.findByNationalID(nationalId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Principal Member not found with National ID: " + nationalId));
     }
 
     /** Fetch Dependant or throw if not found */
     private DependantModel getDependantOrThrow(Long id) {
         return dependantRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Dependant not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Dependant not found"));
     }
 
     /** Validate that a Principal Member does not exceed 6 dependants */
     private void validateDependantLimit(Long principalId) {
         List<DependantModel> existingDependants = dependantRepo.findByPrincipalMemberId(principalId);
         if (existingDependants.size() >= 6) {
+            log.warn("Dependant limit exceeded for Principal Member ID={}", principalId);
             throw new IllegalStateException("Maximum 6 dependants allowed");
         }
     }
@@ -91,22 +106,62 @@ public class PrincipalMemberService {
     }
 
     // ----------------- Business Methods -----------------
-
+    /**
+     * Get all the members in the db
+     * for production purposes I would used pagination
+     */
+    @Transactional
+    public List<MemberDetailsDTO> getAllMembers() {
+        log.info("Fetching all principal members");
+        return principalRepo.findAll().stream().map(principal -> {
+            PrincipalMemberDTO memberDTO = new PrincipalMemberDTO(principal);
+            NextOfKinDTO kinDTO = principal.getNextOfKin() != null ? new NextOfKinDTO(principal.getNextOfKin()) : null;
+            List<DependantDTO> dependantDTOs = dependantRepo.findByPrincipalMemberId(principal.getId())
+                    .stream().map(DependantDTO::new).toList();
+            return new MemberDetailsDTO(memberDTO, kinDTO, dependantDTOs);
+        }).toList();
+    }
     /**
      * Register a full Principal Member aggregate:
      * - Principal Member (mandatory)
      * - Next of Kin (mandatory)
      * - Dependants (optional, max 6)
      */
+    // for internal use
+    @Transactional
+    public MemberDetailsDTO getFullMemberDetails(Long id) {
+        log.debug("Fetching full details for Principal Member ID={}", id);
+        PrincipalMemberModel principal = getPrincipalOrThrow(id);
+        NextOfKinDTO kinDTO = principal.getNextOfKin() != null ? new NextOfKinDTO(principal.getNextOfKin()) : null;
+        List<DependantDTO> dependantDTOs = dependantRepo.findByPrincipalMemberId(id)
+                .stream().map(DependantDTO::new).toList();
+        return new MemberDetailsDTO(new PrincipalMemberDTO(principal), kinDTO, dependantDTOs);
+    }
+    // Role Facilitator, Coordinator and Admin
+    @Transactional
+    public MemberDetailsDTO getFullMemberDetailsByNationalId(String nationalId) {
+        log.info("Fetching member by National ID={}", nationalId);
+        PrincipalMemberModel principal = getPrincipalByNationalIdOrThrow(nationalId);
+        NextOfKinDTO kinDTO = principal.getNextOfKin() != null ? new NextOfKinDTO(principal.getNextOfKin()) : null;
+        List<DependantDTO> dependantDTOs = dependantRepo.findByPrincipalMemberId(principal.getId())
+                .stream().map(DependantDTO::new).toList();
+        return new MemberDetailsDTO(new PrincipalMemberDTO(principal), kinDTO, dependantDTOs);
+    }
+
+    // database operations are commited as a single unit of work
     @Transactional
     public MemberDetailsDTO registerFullMember(RegisterMemberRequestDTO request) {
         PrincipalMemberDTO dto = request.getPrincipal();
+        log.info("Attempting to register Principal Member with NationalID={} and Phone={}",
+                dto.getNationalID(), dto.getPhoneNumber());
 
         // Check for duplicates
         if (principalRepo.existsByNationalID(dto.getNationalID())) {
+            log.warn("Duplicate NationalID detected: {}", dto.getNationalID());
             throw new ValidationException("National ID already exists");
         }
         if (principalRepo.existsByPhoneNumber(dto.getPhoneNumber())) {
+            log.warn("Duplicate PhoneNumber detected: {}", dto.getPhoneNumber());
             throw new ValidationException("Phone number already exists");
         }
 
@@ -134,30 +189,6 @@ public class PrincipalMemberService {
         return getFullMemberDetails(savedPrincipal.getId());
     }
 
-    /**
-     * Retrieve full details of a Principal Member,
-     * including Next of Kin and Dependants.
-     */
-    @Transactional
-    public MemberDetailsDTO getFullMemberDetails(Long id) {
-        PrincipalMemberModel principal = getPrincipalOrThrow(id);
-
-        NextOfKinDTO kinDTO = principal.getNextOfKin() != null
-                ? new NextOfKinDTO(principal.getNextOfKin())
-                : null;
-
-        List<DependantDTO> dependantDTOs = dependantRepo.findByPrincipalMemberId(id)
-                .stream()
-                .map(DependantDTO::new)
-                .toList();
-
-        return new MemberDetailsDTO(
-                new PrincipalMemberDTO(principal),
-                kinDTO != null ? List.of(kinDTO) : List.of(),
-                dependantDTOs
-        );
-    }
-
     /** Full update of Principal Member (PUT-style) */
     @Transactional
     public PrincipalMemberDTO updatePrincipal(Long id, PrincipalMemberDTO dto) {
@@ -168,15 +199,30 @@ public class PrincipalMemberService {
         existing.setPhoneNumber(dto.getPhoneNumber());
         existing.setDateOfBirth(dto.getDateOfBirth());
         existing.setGroupName(dto.getGroupName());
+        log.info("Updated Principal Member ID={}", id);
         return new PrincipalMemberDTO(principalRepo.save(existing));
     }
 
     /** Partial update of Principal Member (PATCH-style) */
     @Transactional
     public PrincipalMemberDTO patchPrincipal(Long id, PrincipalMemberDTO dto) {
+        log.info("Patching Principal Member ID={}", id);
         PrincipalMemberModel existing = getPrincipalOrThrow(id);
         applyPrincipalPatch(existing, dto);
-        return new PrincipalMemberDTO(principalRepo.save(existing));
+
+        if (dto.getNationalID() != null && principalRepo.existsByNationalID(dto.getNationalID())
+                && !dto.getNationalID().equals(existing.getNationalID())) {
+            throw new ValidationException("National ID already exists");
+        }
+
+        if (dto.getPhoneNumber() != null && principalRepo.existsByPhoneNumber(dto.getPhoneNumber())
+                && !dto.getPhoneNumber().equals(existing.getPhoneNumber())) {
+            throw new ValidationException("Phone number already exists");
+        }
+
+        PrincipalMemberModel updated = principalRepo.save(existing);
+        log.info("Successfully patched Principal Member ID={}", id);
+        return new PrincipalMemberDTO(updated);
     }
 
     /** Full update of Next of Kin (PUT-style) */
@@ -186,6 +232,7 @@ public class PrincipalMemberService {
         NextOfKinModel updatedKin = dto.toEntity();
         principal.setNextOfKin(updatedKin);
         PrincipalMemberModel saved = principalRepo.save(principal);
+        log.info("Updated Next of Kin for Principal Member ID={}", principalId);
         return new NextOfKinDTO(saved.getNextOfKin());
     }
 
@@ -197,6 +244,7 @@ public class PrincipalMemberService {
         applyNextOfKinPatch(kin, dto);
         principal.setNextOfKin(kin);
         principalRepo.save(principal);
+        log.info("Patched Next of Kin for Principal Member ID={}", principalId);
         return new NextOfKinDTO(kin);
     }
 
@@ -208,6 +256,7 @@ public class PrincipalMemberService {
         DependantModel dependant = dto.toEntity();
         dependant.setPrincipalMember(principal);
         DependantModel savedDependant = dependantRepo.save(dependant);
+        log.info("Added Dependant ID={} to Principal Member ID={}", savedDependant.getId(), principalId);
         return new DependantDTO(savedDependant);
     }
 
@@ -216,32 +265,34 @@ public class PrincipalMemberService {
     public DependantDTO patchDependant(Long dependantId, DependantDTO dto) {
         DependantModel dependant = getDependantOrThrow(dependantId);
         applyDependantPatch(dependant, dto);
-        return new DependantDTO(dependantRepo.save(dependant));
+        DependantModel updated = dependantRepo.save(dependant);
+        log.info("Patched Dependant ID={}", dependantId);
+        return new DependantDTO(updated);
     }
 
     /** Delete a Principal Member (cascade deletes Next of Kin and Dependants) */
     @Transactional
     public void deletePrincipal(Long id) {
         if (!principalRepo.existsById(id)) {
-            throw new RuntimeException("Member not found");
+            throw new ResourceNotFoundException("Member not found with ID=" + id);
         }
         principalRepo.deleteById(id);
+        log.info("Deleted Principal Member ID={}", id);
     }
 
-/**
- * Delete a dependant through its Principal Member.
- * Ensures
- */
-@Transactional
-public void deleteDependant(Long principalId, Long dependantId) {
-    PrincipalMemberModel principal = getPrincipalOrThrow(principalId);
-    DependantModel dependant = getDependantOrThrow(dependantId);
+    /** Delete a dependant through its Principal Member */
+    @Transactional
+    public void deleteDependant(Long principalId, Long dependantId) {
+        PrincipalMemberModel principal = getPrincipalOrThrow(principalId);
+        DependantModel dependant = getDependantOrThrow(dependantId);
 
-    if (!dependant.getPrincipalMember().getId().equals(principal.getId())) {
-        throw new IllegalStateException("Dependant does not belong to this Principal Member");
+        if (!dependant.getPrincipalMember().getId().equals(principal.getId())) {
+            log.warn("Dependant ID={} does not belong to Principal Member ID={}", dependantId, principalId);
+            throw new ValidationException("Dependant does not belong to this Principal Member");
+        }
+
+        principal.getDependants().remove(dependant);
+        principalRepo.save(principal); // orphanRemoval triggers delete
+        log.info("Deleted Dependant ID={} from Principal Member ID={}", dependantId, principalId);
     }
-
-    principal.getDependants().remove(dependant);
-    principalRepo.save(principal); // orphanRemoval triggers delete
-}
 }

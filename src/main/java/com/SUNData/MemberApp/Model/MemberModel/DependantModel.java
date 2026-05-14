@@ -1,6 +1,6 @@
-package com.SUNData.MemberApp.Model;
+package com.SUNData.MemberApp.Model.MemberModel;
 
-import com.SUNData.MemberApp.Enums.DependantRelationship;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -28,6 +28,7 @@ public class DependantModel {
     private String lastName;
 
     @NotNull
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
 
     @NotBlank
@@ -36,12 +37,11 @@ public class DependantModel {
     @NotBlank
     private String gender;
 
-    @NotBlank
     private String phoneNumber;
 
     private  String birthCertificatePath; // file upload path
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "principal_member_id")
     private PrincipalMemberModel principalMember;
 
@@ -81,7 +81,7 @@ public class DependantModel {
         return relationship;
     }
 
-    public void setRelationship(@NotNull DependantRelationship relationship) {
+    public void setRelationship(@NotNull String relationship) {
         this.relationship = String.valueOf(relationship);
     }
 

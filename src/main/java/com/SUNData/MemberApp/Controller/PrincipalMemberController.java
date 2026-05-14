@@ -1,13 +1,14 @@
 package com.SUNData.MemberApp.Controller;
 
-import com.SUNData.MemberApp.DTOs.*;
+import com.SUNData.MemberApp.DTOs.Member.*;
 import com.SUNData.MemberApp.Service.PrincipalMemberService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "http://localhost:5173/")
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/members")
 public class PrincipalMemberController {
@@ -19,7 +20,25 @@ public class PrincipalMemberController {
     }
 
     // ---------------- Principal Member Endpoints ----------------
-
+    /**
+     * Get full details of a Principal Member,
+     * Get member using system ID
+     * Get member using national ID
+     */
+    @GetMapping
+    public ResponseEntity<List<MemberDetailsDTO>> getAllMembers() {
+        return ResponseEntity.ok(principalMemberService.getAllMembers());
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<MemberDetailsDTO> getMemberDetails(@PathVariable Long id) {
+        return ResponseEntity.ok(principalMemberService.getFullMemberDetails(id));
+    }
+    @GetMapping("/national-id/{nationalId}")
+    public ResponseEntity<MemberDetailsDTO> getByNationalId(@PathVariable String nationalId) {
+        return ResponseEntity.ok(
+                principalMemberService.getFullMemberDetailsByNationalId(nationalId)
+        );
+    }
     /**
      * Register a new Principal Member aggregate:
      * - Principal Member (mandatory)
@@ -29,18 +48,9 @@ public class PrincipalMemberController {
     @PostMapping("/register")
     public ResponseEntity<MemberDetailsDTO> registerMember(
             @Valid @RequestBody RegisterMemberRequestDTO request) {
+
         MemberDetailsDTO dto = principalMemberService.registerFullMember(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
-    }
-
-    /**
-     * Get full details of a Principal Member,
-     * including Next of Kin and Dependants.
-     * data as defined in the memberDetailDTO
-     */
-    @GetMapping("/{id}")
-    public ResponseEntity<MemberDetailsDTO> getMemberDetails(@PathVariable Long id) {
-        return ResponseEntity.ok(principalMemberService.getFullMemberDetails(id));
     }
 
     /** Partial update of Principal Member (PATCH-style) */

@@ -1,4 +1,4 @@
-package com.SUNData.MemberApp.Model;
+package com.SUNData.MemberApp.Model.MemberModel;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
@@ -28,7 +28,7 @@ public class NextOfKinModel {
 
     private String phoneNumber;
 
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
 
     // Option 1: store file path
