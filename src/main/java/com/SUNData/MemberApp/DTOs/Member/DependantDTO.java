@@ -1,5 +1,7 @@
 package com.SUNData.MemberApp.DTOs.Member;
 
+import com.SUNData.MemberApp.Enums.GenderType;
+import com.SUNData.MemberApp.Enums.RelationshipType;
 import com.SUNData.MemberApp.Model.MemberModel.DependantModel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
@@ -20,11 +22,11 @@ public class DependantDTO {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
 
-    @NotBlank(message = "Gender is required")
-    private String gender; // Later: I will replace with GenderType enum
+    @NotNull(message = "Gender is required")
+    private GenderType gender; // Later: I will replace with GenderType enum
 
     @NotNull(message = "Relationship is required")
-    private String relationship;
+    private RelationshipType relationship;
 
     // phone number is optional: will be validated if present
     @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be 10 digits")
@@ -51,11 +53,14 @@ public class DependantDTO {
     public String getLastName() { return lastName; }
     public LocalDate getDateOfBirth() { return dateOfBirth; }
 
-    public @NotNull(message = "Relationship is required") String getRelationship() {
+    public @NotNull(message = "Gender is required") GenderType getGender() {
+        return gender;
+    }
+
+    public @NotNull(message = "Relationship is required") RelationshipType getRelationship() {
         return relationship;
     }
 
-    public String getGender() { return gender; }
     public String getPhoneNumber() { return phoneNumber; }
     public String getBirthCertificatePath() { return birthCertificatePath; }
 

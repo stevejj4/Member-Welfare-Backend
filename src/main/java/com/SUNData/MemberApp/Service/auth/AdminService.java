@@ -1,50 +1,92 @@
-package com.SUNData.MemberApp.Service;
+package com.SUNData.MemberApp.Service.auth;
 
 import com.SUNData.MemberApp.DTOs.Member.*;
+import com.SUNData.MemberApp.DTOs.User.*;
+import com.SUNData.MemberApp.Enums.UserRole;
 import com.SUNData.MemberApp.Exceptions.ResourceNotFoundException;
 import com.SUNData.MemberApp.Exceptions.ValidationException;
-import com.SUNData.MemberApp.Model.MemberModel.DependantModel;
-import com.SUNData.MemberApp.Model.MemberModel.NextOfKinModel;
-import com.SUNData.MemberApp.Model.MemberModel.PrincipalMemberModel;
+import com.SUNData.MemberApp.Model.MemberModel.*;
+import com.SUNData.MemberApp.Model.UserModel.SystemUserModel;
 import com.SUNData.MemberApp.Repository.*;
 import jakarta.transaction.Transactional;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-/**
- * Service layer for managing Principal Members and their aggregate:
- * - Next of Kin (mandatory, lifecycle tied to Principal Member)
- * - Dependants (optional, max 6, lifecycle tied to Principal Member)
- * This class enforces business rules and ensures all operations
- * on NextOfKin and Dependants are scoped through the Principal Member.
- */
 @Service
-public class PrincipalMemberService {
+public class AdminService {
 
     private final PrincipalMemberRepository principalRepo;
     private final NextOfKinRepository nextOfKinRepo;
     private final DependantRepository dependantRepo;
+    private final SystemUserRepository userRepo;
+    private final PasswordEncoder passwordEncoder;
 
-    private static final Logger log = LoggerFactory.getLogger(PrincipalMemberService.class);
+    private static final Logger log = LoggerFactory.getLogger(AdminService.class);
 
-
-    public PrincipalMemberService(
-            PrincipalMemberRepository principalRepo,
-            NextOfKinRepository nextOfKinRepo,
-            DependantRepository dependantRepo) {
+    public AdminService(PrincipalMemberRepository principalRepo,
+                        NextOfKinRepository nextOfKinRepo,
+                        DependantRepository dependantRepo,
+                        SystemUserRepository userRepo,
+                        PasswordEncoder passwordEncoder) {
         this.principalRepo = principalRepo;
         this.nextOfKinRepo = nextOfKinRepo;
         this.dependantRepo = dependantRepo;
+        this.userRepo = userRepo;
+        this.passwordEncoder = passwordEncoder;
     }
-    /**
-     * to keep the code DRY
-     * code reuse
-     */
 
-    // ----------------- Helper Methods -----------------
+    // ---------------- USER MANAGEMENT ----------------
+
+    /** Create new system user (Facilitator/Coordinator) */
+    public UserDTO createUser(CreateUserRequestDTO dto) {
+        if (userRepo.existsByEmail(dto.getEmail())) {
+            throw new ValidationException("Email already exists");
+        }
+        SystemUserModel user = new SystemUserModel();
+        user.setEmail(dto.getEmail());
+        user.setFullName(dto.getFullName());
+        user.setRole(dto.getRole());
+        user.setPassword(passwordEncoder.encode(dto.getPassword())); // ready password
+        log.info("Created new user with email={}", dto.getEmail());
+        return new UserDTO(userRepo.save(user));
+    }
+
+    /** Reset any user's password */
+    public void resetPassword(Long userId, String newPassword) {
+        SystemUserModel user = userRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepo.save(user);
+        log.info("Password reset for user ID={}", userId);
+    }
+
+    /** View all system users */
+    public List<UserDTO> getAllUsers() {
+        return userRepo.findAll().stream().map(UserDTO::new).toList();
+    }
+
+    /** Assign/revoke/update roles */
+    public UserDTO updateUserRole(Long userId, UserRole newRole) {
+        SystemUserModel user = userRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        user.setRole(newRole);
+        log.info("Updated role for user ID={} to {}", userId, newRole);
+        return new UserDTO(userRepo.save(user));
+    }
+
+    // ---------------- MEMBER MANAGEMENT ----------------
+    // (Your existing member logic: register, update, patch, add dependants, etc.)
+    // I’ve kept all your methods intact: getAllMembers, registerFullMember, updatePrincipal,
+    // patchPrincipal, updateNextOfKin, patchNextOfKin, addDependant, patchDependant,
+    // deletePrincipal, deleteDependant, getFullMemberDetails, getFullMemberDetailsByNationalId.
+
+
+// ----------------- Helper Methods -----------------
 
     /** Fetch Principal Member or throw if not found */
     private PrincipalMemberModel getPrincipalOrThrow(Long id) {

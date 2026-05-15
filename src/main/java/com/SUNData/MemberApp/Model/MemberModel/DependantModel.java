@@ -1,5 +1,7 @@
 package com.SUNData.MemberApp.Model.MemberModel;
 
+import com.SUNData.MemberApp.Enums.GenderType;
+import com.SUNData.MemberApp.Enums.RelationshipType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -31,11 +33,11 @@ public class DependantModel {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
 
-    @NotBlank
-    private String relationship; // "Son", "Daughter", "Spouse"
+    @NotNull
+    private RelationshipType relationship; // "Son", "Daughter", "Spouse"
 
-    @NotBlank
-    private String gender;
+    @NotNull
+    private GenderType gender;
 
     private String phoneNumber;
 
@@ -77,19 +79,19 @@ public class DependantModel {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public @NotBlank String getRelationship() {
+    public @NotNull RelationshipType getRelationship() {
         return relationship;
     }
 
-    public void setRelationship(@NotNull String relationship) {
-        this.relationship = String.valueOf(relationship);
+    public void setRelationship(@NotNull RelationshipType relationship) {
+        this.relationship = relationship;
     }
 
-    public @NotBlank String getGender() {
+    public @NotNull GenderType getGender() {
         return gender;
     }
 
-    public void setGender(@NotBlank String gender) {
+    public void setGender(@NotNull GenderType gender) {
         this.gender = gender;
     }
 

@@ -1,5 +1,6 @@
 package com.SUNData.MemberApp.Model.UserModel;
 
+import com.SUNData.MemberApp.Enums.UserRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,6 +11,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "system_user")
 public class SystemUserModel {
@@ -18,56 +21,51 @@ public class SystemUserModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @NotBlank
-    private String password; // hashed
-
-    @Enumerated(EnumType.STRING)
-    private Role role; // FACILITATOR, COORDINATOR, ADMIN
-
+    @Column(nullable = false)
     private String fullName;
 
-    // getter and setters
-    public Long getId() {
-        return id;
-    }
+    @Column(nullable = false)
+    private String password;
+    // stored as BCrypt hash
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @Column(name = "reset_token")
+    private String resetToken;
 
-    public @NotBlank String getEmail() {
-        return email;
-    }
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserRole role;     // ADMIN, FACILITATOR, COORDINATOR
 
-    public void setEmail(@NotBlank String email) {
-        this.email = email;
-    }
+    // Audit fields
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-    public @NotBlank String getPassword() {
-        return password;
-    }
+    public SystemUserModel() {}
 
-    public void setPassword(@NotBlank String password) {
-        this.password = password;
-    }
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public Role getRole() {
-        return role;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public void setRole(Role role) {
-        this.role = role;
-    }
+    public String getFullName() { return fullName; }
+    public void setFullName(String fullName) { this.fullName = fullName; }
 
-    public String getFullName() {
-        return fullName;
-    }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
+    public String getResetToken() { return resetToken; }
+    public void setResetToken(String resetToken) { this.resetToken = resetToken; }
+
+    public UserRole getRole() { return role; }
+    public void setRole(UserRole role) { this.role = role; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

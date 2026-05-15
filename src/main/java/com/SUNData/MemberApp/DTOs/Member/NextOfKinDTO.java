@@ -1,6 +1,8 @@
 package com.SUNData.MemberApp.DTOs.Member;
 
 
+import com.SUNData.MemberApp.Enums.GenderType;
+import com.SUNData.MemberApp.Enums.RelationshipType;
 import com.SUNData.MemberApp.Model.MemberModel.NextOfKinModel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
@@ -26,7 +28,10 @@ public class NextOfKinDTO {
     private String phoneNumber;
 
     @NotNull(message = "Relationship is required")
-    private String relationship;
+    private RelationshipType relationship;
+
+    @NotNull(message = "Gender is required")
+    private GenderType gender;
 
     @NotNull(message = "Date of birth is required")
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -53,7 +58,15 @@ public class NextOfKinDTO {
     public Long getId() { return id; }
     public String getFirstName() { return firstName; }
     public String getLastName() { return lastName; }
-    public String getRelationship() { return relationship; }
+
+    public @NotNull(message = "Relationship is required") RelationshipType getRelationship() {
+        return relationship;
+    }
+
+    public @NotNull(message = "Gender is required") GenderType getGender() {
+        return gender;
+    }
+
     public String getIdNumber() { return idNumber; }
     public String getPhoneNumber() { return phoneNumber; }
     public LocalDate getDateOfBirth() { return dateOfBirth; }
@@ -65,7 +78,8 @@ public class NextOfKinDTO {
         if (this.id != null) model.setId(this.id);
         model.setFirstName(this.firstName);
         model.setLastName(this.lastName);
-        model.setRelationship(String.valueOf(this.relationship));
+        model.setRelationship(this.relationship);
+        model.setGender(this.gender);
         model.setIdNumber(this.idNumber);
         model.setPhoneNumber(this.phoneNumber);
         model.setDateOfBirth(this.dateOfBirth);

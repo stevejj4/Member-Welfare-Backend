@@ -1,5 +1,7 @@
 package com.SUNData.MemberApp.Model.MemberModel;
 
+import com.SUNData.MemberApp.Enums.GenderType;
+import com.SUNData.MemberApp.Enums.RelationshipType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
@@ -21,7 +23,10 @@ public class NextOfKinModel {
     private String lastName;
 
     @Column(nullable = false)
-    private String relationship; // e.g., spouse, sibling, parent
+    private RelationshipType relationship;
+
+    @Column(nullable = false)
+    private GenderType gender;
 
     @Column(nullable = false)
     private String idNumber; // removed unique constraint to allow sharing
@@ -51,8 +56,17 @@ public class NextOfKinModel {
     public String getLastName() { return lastName; }
     public void setLastName(String lastName) { this.lastName = lastName; }
 
-    public String getRelationship() { return relationship; }
-    public void setRelationship(String relationship) { this.relationship = relationship; }
+    public RelationshipType getRelationship() {
+        return relationship;
+    }
+
+    public void setRelationship(RelationshipType relationship) {
+        this.relationship = relationship;
+    }
+
+    public void setGender(GenderType gender) {
+        this.gender = gender;
+    }
 
     public String getIdNumber() { return idNumber; }
     public void setIdNumber(String idNumber) { this.idNumber = idNumber; }

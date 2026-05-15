@@ -1,5 +1,6 @@
 package com.SUNData.MemberApp.Model.MemberModel;
 
+import com.SUNData.MemberApp.Enums.GenderType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
@@ -22,6 +23,9 @@ public class PrincipalMemberModel {
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
+
+    @Enumerated(EnumType.STRING)
+    private GenderType gender;
 
     @Column(nullable = false, unique = true) // enforce uniqueness for national ID
     private String nationalID;
@@ -58,6 +62,14 @@ public class PrincipalMemberModel {
 
     public LocalDate getDateOfBirth() { return dateOfBirth; }
     public void setDateOfBirth(LocalDate dateOfBirth) { this.dateOfBirth = dateOfBirth; }
+
+    public GenderType getGender() {
+        return gender;
+    }
+
+    public void setGender(GenderType gender) {
+        this.gender = gender;
+    }
 
     public String getNationalID() { return nationalID; }
     public void setNationalID(String nationalID) { this.nationalID = nationalID; }

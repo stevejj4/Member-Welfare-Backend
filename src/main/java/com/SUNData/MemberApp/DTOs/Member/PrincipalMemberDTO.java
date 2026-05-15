@@ -1,5 +1,6 @@
 package com.SUNData.MemberApp.DTOs.Member;
 
+import com.SUNData.MemberApp.Enums.GenderType;
 import com.SUNData.MemberApp.Model.MemberModel.PrincipalMemberModel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
@@ -20,6 +21,9 @@ public class PrincipalMemberDTO {
     @NotBlank(message = "National ID is required")
     private String nationalID;
 
+    @NotNull(message = "")
+    private GenderType gender;
+
     @NotBlank(message = "Principal member must have a phone number")
     @Pattern(regexp = "^[0-9]{10}$", message = "Phone number must be 10 digits")
     private String phoneNumber;
@@ -39,6 +43,7 @@ public class PrincipalMemberDTO {
         this.firstName = model.getFirstName();
         this.lastName = model.getLastName();
         this.nationalID = model.getNationalID();
+        this.gender = model.getGender();
         this.phoneNumber = model.getPhoneNumber();
         this.groupName = model.getGroupName();
         this.dateOfBirth = model.getDateOfBirth(); // <-- map it
@@ -49,6 +54,11 @@ public class PrincipalMemberDTO {
     public String getFirstName() { return firstName; }
     public String getLastName() { return lastName; }
     public String getNationalID() { return nationalID; }
+
+    public @NotNull(message = "") GenderType getGender() {
+        return gender;
+    }
+
     public String getPhoneNumber() { return phoneNumber; }
     public String getGroupName() { return groupName; }
     public LocalDate getDateOfBirth() { return dateOfBirth; } // <-- getter
@@ -59,6 +69,7 @@ public class PrincipalMemberDTO {
         model.setFirstName(this.firstName);
         model.setLastName(this.lastName);
         model.setNationalID(this.nationalID);
+        model.setGender(this.gender);
         model.setPhoneNumber(this.phoneNumber);
         model.setGroupName(this.groupName);
         model.setDateOfBirth(this.dateOfBirth); // <-- set it
