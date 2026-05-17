@@ -22,8 +22,8 @@ public class AdminController {
     // ---------------- USER MANAGEMENT ----------------
 
     // ✅ Create new user (Facilitator/Coordinator)
-    @PostMapping("/users")
-    public ResponseEntity<UserDTO> createUser(@RequestBody CreateUserRequestDTO dto) {
+    @PostMapping("/user/register")
+    public ResponseEntity<UserDTO> createUser(@RequestBody RegisterUserDTO dto) {
         return ResponseEntity.ok(adminService.createUser(dto));
     }
 

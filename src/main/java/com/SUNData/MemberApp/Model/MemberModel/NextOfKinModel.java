@@ -23,9 +23,11 @@ public class NextOfKinModel {
     private String lastName;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private RelationshipType relationship;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private GenderType gender;
 
     @Column(nullable = false)
@@ -62,6 +64,10 @@ public class NextOfKinModel {
 
     public void setRelationship(RelationshipType relationship) {
         this.relationship = relationship;
+    }
+
+    public GenderType getGender() {
+        return gender;
     }
 
     public void setGender(GenderType gender) {

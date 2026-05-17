@@ -17,8 +17,8 @@ public class CoordinatorController {
         this.coordinatorService = coordinatorService;
     }
 
-    // ✅ Register member
-    @PostMapping("/members")
+    // Register member
+    @PostMapping("/register")
     public ResponseEntity<MemberDetailsDTO> registerMember(@RequestBody RegisterMemberRequestDTO request) {
         return ResponseEntity.ok(coordinatorService.registerMember(request));
     }

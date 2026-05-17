@@ -9,7 +9,6 @@ import com.SUNData.MemberApp.Model.MemberModel.*;
 import com.SUNData.MemberApp.Model.UserModel.SystemUserModel;
 import com.SUNData.MemberApp.Repository.*;
 import jakarta.transaction.Transactional;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
@@ -43,7 +42,7 @@ public class AdminService {
     // ---------------- USER MANAGEMENT ----------------
 
     /** Create new system user (Facilitator/Coordinator) */
-    public UserDTO createUser(CreateUserRequestDTO dto) {
+    public UserDTO createUser(RegisterUserDTO dto) {
         if (userRepo.existsByEmail(dto.getEmail())) {
             throw new ValidationException("Email already exists");
         }
@@ -130,6 +129,8 @@ public class AdminService {
         if (dto.getFirstName() != null) kin.setFirstName(dto.getFirstName());
         if (dto.getLastName() != null) kin.setLastName(dto.getLastName());
         if (dto.getRelationship() != null) kin.setRelationship(dto.getRelationship());
+        if (dto.getGender() != null) kin.setGender(dto.getGender());
+
         if (dto.getIdNumber() != null) kin.setIdNumber(dto.getIdNumber());
         if (dto.getPhoneNumber() != null) kin.setPhoneNumber(dto.getPhoneNumber());
         if (dto.getDateOfBirth() != null) kin.setDateOfBirth(dto.getDateOfBirth());

@@ -1,4 +1,4 @@
-package com.SUNData.MemberApp.DTOs.User;
+package com.SUNData.MemberApp.DTOs.Auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

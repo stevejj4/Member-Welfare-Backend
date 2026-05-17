@@ -48,6 +48,7 @@ public class NextOfKinDTO {
         this.firstName = model.getFirstName();
         this.lastName = model.getLastName();
         this.relationship = model.getRelationship();
+        this.gender = model.getGender();
         this.idNumber = model.getIdNumber();
         this.phoneNumber = model.getPhoneNumber();
         this.dateOfBirth = model.getDateOfBirth();
@@ -59,11 +60,11 @@ public class NextOfKinDTO {
     public String getFirstName() { return firstName; }
     public String getLastName() { return lastName; }
 
-    public @NotNull(message = "Relationship is required") RelationshipType getRelationship() {
+    public RelationshipType getRelationship() {
         return relationship;
     }
 
-    public @NotNull(message = "Gender is required") GenderType getGender() {
+    public GenderType getGender() {
         return gender;
     }
 
@@ -71,6 +72,7 @@ public class NextOfKinDTO {
     public String getPhoneNumber() { return phoneNumber; }
     public LocalDate getDateOfBirth() { return dateOfBirth; }
     public String getIdAttachmentPath() { return idAttachmentPath; }
+
 
     // Convert DTO back to entity
     public NextOfKinModel toEntity() {

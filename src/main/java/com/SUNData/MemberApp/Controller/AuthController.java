@@ -1,41 +1,60 @@
 package com.SUNData.MemberApp.Controller;
 
-import com.SUNData.MemberApp.DTOs.User.CreateUserRequestDTO;
-import com.SUNData.MemberApp.DTOs.User.LoginRequestDTO;
-import com.SUNData.MemberApp.DTOs.User.UserDTO;
-import com.SUNData.MemberApp.Service.auth.AdminService;
-import com.SUNData.MemberApp.Service.auth.AuthService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import com.SUNData.MemberApp.DTOs.Auth.LoginRequestDTO;
+import com.SUNData.MemberApp.DTOs.Auth.AuthResponseDTO;
+import com.SUNData.MemberApp.DTOs.User.RegisterUserDTO;
+import com.SUNData.MemberApp.Config.JwtUtil;
+import com.SUNData.MemberApp.Enums.UserRole;
 import com.SUNData.MemberApp.Model.UserModel.SystemUserModel;
-
-import jakarta.validation.Valid;
+import com.SUNData.MemberApp.Repository.SystemUserRepository;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final AuthService authService;
-    private final AdminService adminService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
+    private final SystemUserRepository systemUserRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthController(AuthService authService, AdminService adminService) {
-        this.authService = authService;
-        this.adminService = adminService;
+    public AuthController(AuthenticationManager authenticationManager,
+                          JwtUtil jwtUtil,
+                          SystemUserRepository systemUserRepository,
+                          PasswordEncoder passwordEncoder) {
+        this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
+        this.systemUserRepository = systemUserRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<UserDTO> register(@Valid @RequestBody CreateUserRequestDTO dto) {
-        UserDTO user = adminService.createUser(dto);
-        return ResponseEntity.ok(user);
-    }
-
+    // 🔹 LOGIN ENDPOINT
     @PostMapping("/login")
-    public ResponseEntity<UserDTO> login(@Valid @RequestBody LoginRequestDTO dto) {
-        UserDTO user = authService.login(dto);
-        return ResponseEntity.ok(user);
+    public AuthResponseDTO login(@RequestBody LoginRequestDTO request) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+        );
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String role = userDetails.getAuthorities().iterator().next().getAuthority();
+        String token = jwtUtil.generateToken(userDetails.getUsername(), role);
+        return new AuthResponseDTO(token, role);
+    }
+
+    // 🔹 REGISTER ENDPOINT
+    @PostMapping("/register")
+    public String register(@RequestBody RegisterUserDTO request) {
+        SystemUserModel user = new SystemUserModel();
+        user.setEmail(request.getEmail());
+        user.setFullName(request.getFullName());
+        user.setPassword(passwordEncoder.encode(request.getPassword())); // BCrypt encoding
+        user.setRole(UserRole.valueOf(request.getRole().toString())); // convert string to enum
+
+        systemUserRepository.save(user);
+        return "User registered successfully";
     }
 }

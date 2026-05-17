@@ -2,6 +2,7 @@ package com.SUNData.MemberApp.Controller;
 
 import com.SUNData.MemberApp.DTOs.Member.*;
 import com.SUNData.MemberApp.Service.auth.FacilitatorService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +20,7 @@ public class FacilitatorController {
 
     // ✅ Register new member
     @PostMapping("/register")
-    public ResponseEntity<MemberDetailsDTO> registerMember(@RequestBody RegisterMemberRequestDTO request) {
+    public ResponseEntity<MemberDetailsDTO> registerMember(@Valid @RequestBody RegisterMemberRequestDTO request) {
         return ResponseEntity.ok(facilitatorService.registerMember(request));
     }
 

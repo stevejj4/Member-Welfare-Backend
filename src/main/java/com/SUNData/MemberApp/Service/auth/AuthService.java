@@ -1,6 +1,6 @@
 package com.SUNData.MemberApp.Service.auth;
 
-import com.SUNData.MemberApp.DTOs.User.LoginRequestDTO;
+import com.SUNData.MemberApp.DTOs.Auth.LoginRequestDTO;
 import com.SUNData.MemberApp.DTOs.User.UserDTO;
 import com.SUNData.MemberApp.Exceptions.ResourceNotFoundException;
 import com.SUNData.MemberApp.Exceptions.ValidationException;

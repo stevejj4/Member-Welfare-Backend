@@ -34,9 +34,11 @@ public class DependantModel {
     private LocalDate dateOfBirth;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     private RelationshipType relationship; // "Son", "Daughter", "Spouse"
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     private GenderType gender;
 
     private String phoneNumber;
