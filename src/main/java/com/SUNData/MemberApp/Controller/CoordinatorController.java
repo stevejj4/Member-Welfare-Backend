@@ -28,6 +28,16 @@ public class CoordinatorController {
     public ResponseEntity<List<MemberDetailsDTO>> getAllMembers() {
         return ResponseEntity.ok(coordinatorService.getAllMembers());
     }
+    // ✅ Get member by ID
+    @GetMapping("/members/{id}")
+    public ResponseEntity<MemberDetailsDTO> getMemberById(@PathVariable Long id) {
+        return ResponseEntity.ok(coordinatorService.getMemberById(id));
+    }
+    // ✅ Get member by National ID
+    @GetMapping("/members/national-id/{nationalId}")
+    public ResponseEntity<MemberDetailsDTO> getMemberByNationalId(@PathVariable String nationalId) {
+        return ResponseEntity.ok(coordinatorService.getMemberByNationalId(nationalId));
+    }
 
     // ✅ Update Next of Kin
     @PutMapping("/members/{principalId}/next-of-kin")

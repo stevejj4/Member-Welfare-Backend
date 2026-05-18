@@ -32,8 +32,6 @@ public class AuthController {
         this.systemUserRepository = systemUserRepository;
         this.passwordEncoder = passwordEncoder;
     }
-
-    // 🔹 LOGIN ENDPOINT
     @PostMapping("/login")
     public AuthResponseDTO login(@RequestBody LoginRequestDTO request) {
         Authentication authentication = authenticationManager.authenticate(
@@ -42,8 +40,13 @@ public class AuthController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String role = userDetails.getAuthorities().iterator().next().getAuthority();
         String token = jwtUtil.generateToken(userDetails.getUsername(), role);
-        return new AuthResponseDTO(token, role);
+
+        SystemUserModel user = systemUserRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return new AuthResponseDTO(token, role, user.getId(), user.getEmail(), user.getFullName());
     }
+
 
     // 🔹 REGISTER ENDPOINT
     @PostMapping("/register")

@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 public class JwtUtil {
     // Use a strong secret key (at least 256 bits for HS256)
     private static final String SECRET = "mySuperSecretKeyForJwtGeneration1234567890";
-    private static final long EXPIRATION = 1000 * 60 * 60; // 1 hour
+    private static final long EXPIRATION = 1000 * 60 * 60 * 8; // 1 hour
 
     private Key getSigningKey() {
         // Option 1: if SECRET is plain text

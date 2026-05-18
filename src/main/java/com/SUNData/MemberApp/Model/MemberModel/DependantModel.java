@@ -33,11 +33,11 @@ public class DependantModel {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
+    @Column(name="relationship", nullable = true)
     private RelationshipType relationship; // "Son", "Daughter", "Spouse"
 
-    @NotNull
+    @Column(nullable=true)
     @Enumerated(EnumType.STRING)
     private GenderType gender;
 
@@ -81,11 +81,11 @@ public class DependantModel {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public @NotNull RelationshipType getRelationship() {
+    public RelationshipType getRelationship() {
         return relationship;
     }
 
-    public void setRelationship(@NotNull RelationshipType relationship) {
+    public void setRelationship( RelationshipType relationship) {
         this.relationship = relationship;
     }
 

@@ -24,6 +24,16 @@ public class CoordinatorService {
         return adminService.getAllMembers();
     }
 
+    // ✅ Get member by ID
+    public MemberDetailsDTO getMemberById(Long id) {
+        return adminService.getFullMemberDetails(id);
+    }
+
+    // ✅ Get member by National ID
+    public MemberDetailsDTO getMemberByNationalId(String nationalId) {
+        return adminService.getFullMemberDetailsByNationalId(nationalId);
+    }
+
     // ✅ Edit Next of Kin (full update)
     public NextOfKinDTO updateNextOfKin(Long principalId, NextOfKinDTO dto) {
         return adminService.updateNextOfKin(principalId, dto);
@@ -32,6 +42,12 @@ public class CoordinatorService {
     // ✅ Edit Next of Kin (partial update)
     public NextOfKinDTO patchNextOfKin(Long principalId, NextOfKinDTO dto) {
         return adminService.patchNextOfKin(principalId, dto);
+    }
+
+
+    // ✅ Add dependant
+    public DependantDTO addDependant(Long principalId, DependantDTO dto) {
+        return adminService.addDependant(principalId, dto);
     }
 
     // ✅ Edit Dependant (partial update)
