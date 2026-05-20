@@ -3,7 +3,7 @@ package com.SUNData.MemberApp.Controller;
 import com.SUNData.MemberApp.DTOs.Member.*;
 import com.SUNData.MemberApp.DTOs.User.*;
 import com.SUNData.MemberApp.Enums.UserRole;
-import com.SUNData.MemberApp.Service.auth.AdminService;
+import com.SUNData.MemberApp.Service.admin.AdminService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,12 +20,6 @@ public class AdminController {
     }
 
     // ---------------- USER MANAGEMENT ----------------
-
-    // ✅ Create new user (Facilitator/Coordinator)
-    @PostMapping("/user/register")
-    public ResponseEntity<UserDTO> createUser(@RequestBody RegisterUserDTO dto) {
-        return ResponseEntity.ok(adminService.createUser(dto));
-    }
 
     // ✅ Reset any user's password
     @PutMapping("/users/{id}/reset-password")

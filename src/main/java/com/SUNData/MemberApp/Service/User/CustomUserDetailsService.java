@@ -1,4 +1,4 @@
-package com.SUNData.MemberApp.Service.auth;
+package com.SUNData.MemberApp.Service.User;
 
 import com.SUNData.MemberApp.Model.UserModel.SystemUserModel;
 import com.SUNData.MemberApp.Repository.SystemUserRepository;

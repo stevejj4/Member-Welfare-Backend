@@ -8,9 +8,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table (name = "Dependants")
@@ -44,6 +47,12 @@ public class DependantModel {
     private String phoneNumber;
 
     private  String birthCertificatePath; // file upload path
+
+    @CreationTimestamp
+    private LocalDateTime registrationDate;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "principal_member_id")

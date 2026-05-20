@@ -1,4 +1,4 @@
-package com.SUNData.MemberApp.Service.auth;
+package com.SUNData.MemberApp.Service.User;
 
 import com.SUNData.MemberApp.DTOs.Auth.LoginRequestDTO;
 import com.SUNData.MemberApp.DTOs.User.UserDTO;

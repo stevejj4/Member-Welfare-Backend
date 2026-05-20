@@ -4,8 +4,11 @@ import com.SUNData.MemberApp.Enums.GenderType;
 import com.SUNData.MemberApp.Enums.RelationshipType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -40,6 +43,12 @@ public class NextOfKinModel {
 
     // Option 1: store file path
     private String idAttachmentPath;
+
+    @CreationTimestamp
+    private LocalDateTime registrationDate;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
     // Relationship with Principal Members (shared Next of Kin)
     // orphanRemoval = true -- ensures principal member removal, nextOfKin is also removed

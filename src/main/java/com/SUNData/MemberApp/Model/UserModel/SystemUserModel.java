@@ -1,17 +1,14 @@
 package com.SUNData.MemberApp.Model.UserModel;
 
 import com.SUNData.MemberApp.Enums.UserRole;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.SUNData.MemberApp.Model.MemberModel.PrincipalMemberModel;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "system_user")
@@ -35,11 +32,15 @@ public class SystemUserModel {
     private String resetToken;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private UserRole role;     // ADMIN, FACILITATOR, COORDINATOR
+    private UserRole role;
 
     // Audit fields
+    @CreationTimestamp
+    @Column(updatable = false)
     private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(updatable = false)
     private LocalDateTime updatedAt;
 
     public SystemUserModel() {}

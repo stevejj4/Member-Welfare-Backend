@@ -1,7 +1,7 @@
 package com.SUNData.MemberApp.Controller;
 
 import com.SUNData.MemberApp.DTOs.Member.*;
-import com.SUNData.MemberApp.Service.auth.CoordinatorService;
+import com.SUNData.MemberApp.Service.member.CoordinatorService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +18,7 @@ public class CoordinatorController {
     }
 
     // Register member
-    @PostMapping("/register")
+    @PostMapping("/members/register")
     public ResponseEntity<MemberDetailsDTO> registerMember(@RequestBody RegisterMemberRequestDTO request) {
         return ResponseEntity.ok(coordinatorService.registerMember(request));
     }
@@ -61,7 +61,7 @@ public class CoordinatorController {
     }
 
     // ✅ Delete dependant
-    @DeleteMapping("/members/{principalId}/dependants/{dependantId}")
+    @DeleteMapping("/{principalId}/dependants/{dependantId}")
     public ResponseEntity<Void> deleteDependant(@PathVariable Long principalId,
                                                 @PathVariable Long dependantId) {
         coordinatorService.deleteDependant(principalId, dependantId);

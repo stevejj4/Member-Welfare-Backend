@@ -1,10 +1,13 @@
 package com.SUNData.MemberApp.Model.MemberModel;
 
 import com.SUNData.MemberApp.Enums.GenderType;
+import com.SUNData.MemberApp.Model.UserModel.SystemUserModel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -34,6 +37,9 @@ public class PrincipalMemberModel {
     private String phoneNumber;
 
     private String groupName;
+
+    @CreationTimestamp
+    private LocalDateTime registrationDate;
 
     // Each principal member has exactly one next of kin
     @ManyToOne(cascade = CascadeType.ALL, optional = false)
@@ -85,4 +91,12 @@ public class PrincipalMemberModel {
 
     public List<DependantModel> getDependants() { return dependants; }
     public void setDependants(List<DependantModel> dependants) { this.dependants = dependants; }
+
+    public LocalDateTime getRegistrationDate() {
+        return registrationDate;
+    }
+
+    public void setRegistrationDate(LocalDateTime registrationDate) {
+        this.registrationDate = registrationDate;
+    }
 }

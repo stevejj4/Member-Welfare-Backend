@@ -1,6 +1,7 @@
-package com.SUNData.MemberApp.Service.auth;
+package com.SUNData.MemberApp.Service.member;
 
 import com.SUNData.MemberApp.DTOs.Member.*;
+import com.SUNData.MemberApp.Service.admin.AdminService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

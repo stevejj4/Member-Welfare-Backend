@@ -2,7 +2,6 @@ package com.SUNData.MemberApp.DTOs.User;
 
 import com.SUNData.MemberApp.Enums.UserRole;
 import com.SUNData.MemberApp.Model.UserModel.SystemUserModel;
-import com.SUNData.MemberApp.Model.UserModel.SystemUserModel;
 
 public class UserDTO {
     private Long id;

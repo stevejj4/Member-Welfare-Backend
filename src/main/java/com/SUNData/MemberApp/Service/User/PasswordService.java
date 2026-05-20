@@ -1,4 +1,4 @@
-package com.SUNData.MemberApp.Service.auth;
+package com.SUNData.MemberApp.Service.User;
 
 import com.SUNData.MemberApp.DTOs.User.ForgotPasswordRequestDTO;
 import com.SUNData.MemberApp.DTOs.User.ResetPasswordRequestDTO;
@@ -51,3 +51,4 @@ public class PasswordService {
         userRepo.save(user);
     }
 }
+

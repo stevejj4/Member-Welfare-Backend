@@ -4,7 +4,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.io.Decoders;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -12,31 +11,58 @@ import java.util.Date;
 
 import org.springframework.stereotype.Component;
 
+/**
+ * Utility class for handling JWT (JSON Web Token) operations.
+ * Responsibilities:
+ * - Generate JWT tokens with username and role claims.
+ * - Extract claims (username, role) from tokens.
+ * - Validate tokens against signature and expiration.
+ *
+ * Security Notes:
+ * - Uses HS256 algorithm with a strong secret key.
+ * - Tokens include expiration to prevent indefinite validity.
+ */
 @Component
 public class JwtUtil {
-    // Use a strong secret key (at least 256 bits for HS256)
+
+    // 🔹 Secret key for signing JWTs (must be at least 256 bits for HS256).
+    // In production, store this securely (e.g., environment variable).
     private static final String SECRET = "mySuperSecretKeyForJwtGeneration1234567890";
-    private static final long EXPIRATION = 1000 * 60 * 60 * 8; // 1 hour
 
+    // 🔹 Token expiration time (8 hours here).
+    private static final long EXPIRATION = 1000 * 60 * 60 * 8;
+
+    /**
+     * Returns the signing key used for JWT operations.
+     * Converts the secret string into a cryptographic key.
+     */
     private Key getSigningKey() {
-        // Option 1: if SECRET is plain text
         return Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
-
-        // Option 2: if SECRET is Base64 encoded
-        // byte[] keyBytes = Decoders.BASE64.decode(SECRET);
-        // return Keys.hmacShaKeyFor(keyBytes);
     }
 
+    /**
+     * Generates a JWT token containing username and role claims.
+     *
+     * @param username The user's email/username.
+     * @param role     The user's role (e.g., ADMIN, FACILITATOR).
+     * @return A signed JWT string.
+     */
     public String generateToken(String username, String role) {
         return Jwts.builder()
-                .setSubject(username)
-                .claim("role", role)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .setSubject(username) // "sub" claim
+                .claim("role", role)  // custom claim for role
+                .setIssuedAt(new Date()) // issue time
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION)) // expiry
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256) // sign with HS256
                 .compact();
     }
 
+    /**
+     * Extracts the username (subject) from a JWT token.
+     *
+     * @param token The JWT string.
+     * @return The username/email stored in the token.
+     */
     public String extractUsername(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
@@ -46,6 +72,12 @@ public class JwtUtil {
                 .getSubject();
     }
 
+    /**
+     * Extracts the role claim from a JWT token.
+     *
+     * @param token The JWT string.
+     * @return The role (e.g., ADMIN, FACILITATOR).
+     */
     public String extractRole(String token) {
         return (String) Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
@@ -55,6 +87,13 @@ public class JwtUtil {
                 .get("role");
     }
 
+    /**
+     * Validates a JWT token.
+     * Checks signature and expiration.
+     *
+     * @param token The JWT string.
+     * @return true if valid, false otherwise.
+     */
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
@@ -63,7 +102,7 @@ public class JwtUtil {
                     .parseClaimsJws(token);
             return true;
         } catch (JwtException e) {
-            return false;
+            return false; // invalid signature or expired token
         }
     }
 }
