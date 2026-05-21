@@ -52,6 +52,12 @@ public class CoordinatorController {
                                                        @RequestBody NextOfKinDTO dto) {
         return ResponseEntity.ok(coordinatorService.patchNextOfKin(principalId, dto));
     }
+    @DeleteMapping("/members/{principalId}/next-of-kin")
+    public ResponseEntity<Void> deleteNextOfKin(@PathVariable Long principalId) {
+        coordinatorService.deleteNextOfKin(principalId);
+        return ResponseEntity.noContent().build();
+    }
+
 
     // ✅ Patch Dependant
     @PatchMapping("/members/dependants/{dependantId}")

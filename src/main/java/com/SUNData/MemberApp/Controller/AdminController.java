@@ -3,8 +3,11 @@ package com.SUNData.MemberApp.Controller;
 import com.SUNData.MemberApp.DTOs.Member.*;
 import com.SUNData.MemberApp.DTOs.User.*;
 import com.SUNData.MemberApp.Enums.UserRole;
+import com.SUNData.MemberApp.Model.UserModel.SystemUserModel;
+import com.SUNData.MemberApp.Repository.SystemUserRepository;
 import com.SUNData.MemberApp.Service.admin.AdminService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,24 +17,41 @@ import java.util.List;
 public class AdminController {
 
     private final AdminService adminService;
+    private final SystemUserRepository systemUserRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public AdminController(AdminService adminService) {
+    public AdminController(AdminService adminService, SystemUserRepository systemUserRepository,
+                           PasswordEncoder passwordEncoder) {
         this.adminService = adminService;
+        this.systemUserRepository = systemUserRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // ---------------- USER MANAGEMENT ----------------
+
+
+    // ✅ View all users
+    @GetMapping("/users")
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        return ResponseEntity.ok(adminService.getAllUsers());
+    }
+
+    @PostMapping("/register")
+    public String register(@RequestBody RegisterUserDTO request) {
+        SystemUserModel user = new SystemUserModel();
+        user.setEmail(request.getEmail());
+        user.setFullName(request.getFullName());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(request.getRole());
+        systemUserRepository.save(user);
+        return "User registered successfully";
+    }
 
     // ✅ Reset any user's password
     @PutMapping("/users/{id}/reset-password")
     public ResponseEntity<Void> resetPassword(@PathVariable Long id, @RequestBody String newPassword) {
         adminService.resetPassword(id, newPassword);
         return ResponseEntity.noContent().build();
-    }
-
-    // ✅ View all users
-    @GetMapping("/users")
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
-        return ResponseEntity.ok(adminService.getAllUsers());
     }
 
     // ✅ Update user role (assign/revoke/update)
@@ -92,6 +112,12 @@ public class AdminController {
     public ResponseEntity<NextOfKinDTO> patchNextOfKin(@PathVariable Long principalId,
                                                        @RequestBody NextOfKinDTO dto) {
         return ResponseEntity.ok(adminService.patchNextOfKin(principalId, dto));
+    }
+
+    @DeleteMapping("/members/{principalId}/next-of-kin")
+    public ResponseEntity<Void> deleteNextOfKin(@PathVariable Long principalId) {
+        adminService.deleteNextOfKin(principalId);
+        return ResponseEntity.noContent().build();
     }
 
     // ✅ Add dependant

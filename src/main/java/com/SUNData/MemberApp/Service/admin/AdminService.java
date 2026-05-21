@@ -338,4 +338,20 @@ public class AdminService {
         principalRepo.save(principal); // orphanRemoval triggers delete
         log.info("Deleted Dependant ID={} from Principal Member ID={}", dependantId, principalId);
     }
+    /** Delete Next of Kin for a Principal Member */
+    @Transactional
+    public void deleteNextOfKin(Long principalId) {
+        PrincipalMemberModel principal = getPrincipalOrThrow(principalId);
+
+        if (principal.getNextOfKin() == null) {
+            throw new ResourceNotFoundException("Next of Kin not found for Principal Member ID=" + principalId);
+        }
+
+        principal.setNextOfKin(null); // orphanRemoval will trigger delete
+        principalRepo.save(principal);
+
+        log.info("Deleted Next of Kin for Principal Member ID={}", principalId);
+    }
+
+
 }

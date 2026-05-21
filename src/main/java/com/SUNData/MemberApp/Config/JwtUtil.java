@@ -44,7 +44,7 @@ public class JwtUtil {
      * Generates a JWT token containing username and role claims.
      *
      * @param username The user's email/username.
-     * @param role     The user's role (e.g., ADMIN, FACILITATOR).
+     * @param role     The user's role (ADMIN, FACILITATOR, COORDINATOR).
      * @return A signed JWT string.
      */
     public String generateToken(String username, String role) {

@@ -56,17 +56,6 @@ public class AuthController {
         return new AuthResponseDTO(token, role, user.getId(), user.getEmail(), user.getFullName());
     }
 
-    @PostMapping("/register")
-    public String register(@RequestBody RegisterUserDTO request) {
-        SystemUserModel user = new SystemUserModel();
-        user.setEmail(request.getEmail());
-        user.setFullName(request.getFullName());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(request.getRole());
-        systemUserRepository.save(user);
-        return "User registered successfully";
-    }
-
     // ---------------- PASSWORD ENDPOINTS ----------------
 
     @PostMapping("/password/forgot")

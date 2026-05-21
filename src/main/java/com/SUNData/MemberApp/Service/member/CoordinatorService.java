@@ -60,4 +60,8 @@ public class CoordinatorService {
     public void deleteDependant(Long principalId, Long dependantId) {
         adminService.deleteDependant(principalId, dependantId);
     }
+
+    public void deleteNextOfKin(Long principalId) {
+        adminService.deleteNextOfKin(principalId);
+    }
 }
