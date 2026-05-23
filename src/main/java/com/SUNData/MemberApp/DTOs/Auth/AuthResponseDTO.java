@@ -8,20 +8,22 @@ public class AuthResponseDTO {
     private Long id;
     private String email;
     private String fullName;
+    private java.util.List<String> permissions;
 
-    // constructor
-    public AuthResponseDTO(String token, String role, Long id, String email, String fullName) {
+    public AuthResponseDTO(String token, String role, Long id, String email, String fullName,
+                           java.util.List<String> permissions) {
         this.token = token;
         this.role = role;
         this.id = id;
         this.email = email;
         this.fullName = fullName;
+        this.permissions = permissions;
     }
 
-    // getters & setters
     public String getToken() { return token; }
     public String getRole() { return role; }
     public Long getId() { return id; }
     public String getEmail() { return email; }
     public String getFullName() { return fullName; }
+    public java.util.List<String> getPermissions() { return permissions; }
 }

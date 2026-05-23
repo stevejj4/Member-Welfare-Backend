@@ -44,15 +44,23 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
-                .csrf(csrf -> csrf.disable()) // CSRF disabled for stateless JWT usage
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Apply CORS rules
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() // Public endpoints (login, register)
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN") // Restricted to ADMIN role
-                        .requestMatchers("/api/facilitator/**").hasRole("FACILITATOR") // Restricted to FACILITATOR role
-                        .requestMatchers("/api/coordinator/**").hasRole("COORDINATOR") // Restricted to COORDINATOR role
-                        .anyRequest().authenticated() // All other endpoints require authentication
+
+                        // PUBLIC
+                        .requestMatchers("/api/auth/**").permitAll()
+
+                        // ADMIN (user management — still role-gated)
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                        // PBAC member + navigation APIs (fine-grained via @PreAuthorize)
+                        .requestMatchers("/api/v1/members/**").authenticated()
+                        .requestMatchers("/api/v1/me/**").authenticated()
+
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

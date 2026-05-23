@@ -6,7 +6,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import com.SUNData.MemberApp.Security.RolePermissionResolver;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -16,16 +17,30 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Custom JWT authentication filter.
- * Responsibilities:
- * - Intercepts every request once (OncePerRequestFilter).
- * - Extracts and validates JWT from the Authorization header.
- * - Builds authentication object using claims from JWT (username + role).
- * - Stores authentication in SecurityContext for downstream access.
+ * ==============================================================
+ * JWT AUTHENTICATION FILTER
+ * ==============================================================
  *
- * Optimization:
- * - Does NOT hit the database on every request.
- * - Trusts JWT payload for username and role.
+ * PURPOSE:
+ * This filter intercepts every HTTP request once per request
+ * and performs JWT-based authentication.
+ *
+ * RESPONSIBILITIES:
+ * 1. Extract JWT token from Authorization header
+ * 2. Validate token integrity and expiration
+ * 3. Extract user identity (username + role) from token
+ * 4. Convert role into Spring Security authorities
+ * 5. Set authentication into SecurityContext
+ *
+ * WHY THIS EXISTS:
+ * - Enables stateless authentication (no session storage)
+ * - Ensures every request is securely validated
+ * - Integrates JWT with Spring Security authorization system
+ *
+ * SECURITY MODEL:
+ * - JWT is trusted after validation (signature + expiry)
+ * - Role is derived from token claims
+ * - Spring Security uses ROLE_ prefix convention
  */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -36,10 +51,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.jwtUtil = jwtUtil;
     }
 
+    /**
+     * Main filter execution method.
+     * <p>
+     * Flow:
+     * 1. Read Authorization header
+     * 2. Extract Bearer token
+     * 3. Validate token
+     * 4. Extract username and role
+     * 5. Normalize role format
+     * 6. Create Authentication object
+     * 7. Store in SecurityContext
+     */
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain chain) throws ServletException, IOException {
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain chain
+    ) throws ServletException, IOException {
 
         String authHeader = request.getHeader("Authorization");
         String token = null;
@@ -48,25 +77,48 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             token = authHeader.substring(7);
         }
 
-        if (token != null && jwtUtil.validateToken(token) &&
-                SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (token != null
+                && jwtUtil.validateToken(token)
+                && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             String username = jwtUtil.extractUsername(token);
-            String role = jwtUtil.extractRole(token); // e.g. "COORDINATOR" or "ROLE_COORDINATOR"
+            String role = jwtUtil.extractRole(token);
 
-            // Normalize role: strip prefix if already present
+            // ================================
+            // VALIDATION (IMPORTANT)
+            // ================================
+            if (role == null || role.isBlank()) {
+                throw new RuntimeException("JWT role is missing");
+            }
+
+            // ================================
+            // NORMALIZATION
+            // ================================
             if (role.startsWith("ROLE_")) {
                 role = role.substring(5);
             }
 
-            // Build authority with ROLE_ prefix
-            var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+            role = role.toUpperCase();
 
-            UsernamePasswordAuthenticationToken authToken =
-                    new UsernamePasswordAuthenticationToken(username, null, authorities);
+            // ================================
+            // PBAC: role + fine-grained permissions
+            // ================================
+            List<GrantedAuthority> authorities = new java.util.ArrayList<>(
+                    RolePermissionResolver.authoritiesForRoleName(role)
+            );
 
-            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authToken);
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(
+                            username,
+                            null,
+                            authorities
+                    );
+
+            authentication.setDetails(
+                    new WebAuthenticationDetailsSource().buildDetails(request)
+            );
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
         chain.doFilter(request, response);

@@ -2,6 +2,7 @@ package com.SUNData.MemberApp.Service.User;
 
 import com.SUNData.MemberApp.Model.UserModel.SystemUserModel;
 import com.SUNData.MemberApp.Repository.SystemUserRepository;
+import com.SUNData.MemberApp.Security.RolePermissionResolver;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -25,7 +26,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return User.builder()
                 .username(user.getEmail())
                 .password(user.getPassword())
-                .roles(user.getRole().name()) // e.g. ADMIN, FACILITATOR
+                .authorities(RolePermissionResolver.authoritiesFor(user.getRole()))
                 .build();
     }
 }

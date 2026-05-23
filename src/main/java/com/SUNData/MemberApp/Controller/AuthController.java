@@ -6,7 +6,7 @@ import com.SUNData.MemberApp.DTOs.User.ForgotPasswordRequestDTO;
 import com.SUNData.MemberApp.DTOs.User.RegisterUserDTO;
 import com.SUNData.MemberApp.Config.JwtUtil;
 import com.SUNData.MemberApp.DTOs.User.ResetPasswordRequestDTO;
-import com.SUNData.MemberApp.Enums.UserRole;
+import com.SUNData.MemberApp.Security.RolePermissionResolver;
 import com.SUNData.MemberApp.Model.UserModel.SystemUserModel;
 import com.SUNData.MemberApp.Repository.SystemUserRepository;
 import com.SUNData.MemberApp.Service.User.PasswordService;
@@ -38,23 +38,39 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
         this.passwordService = passwordService;
     }
-
     @PostMapping("/login")
     public AuthResponseDTO login(@RequestBody LoginRequestDTO request) {
+
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
         );
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String authority = userDetails.getAuthorities().iterator().next().getAuthority();
-        String role = authority.replace("ROLE_", "");
-        String token = jwtUtil.generateToken(userDetails.getUsername(), role);
 
         SystemUserModel user = systemUserRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return new AuthResponseDTO(token, role, user.getId(), user.getEmail(), user.getFullName());
+        // Use persisted role — not the first GrantedAuthority (may be a PBAC permission).
+        String role = user.getRole().name();
+
+        String token = jwtUtil.generateToken(
+                userDetails.getUsername(),
+                role
+        );
+
+        return new AuthResponseDTO(
+                token,
+                role,
+                user.getId(),
+                user.getEmail(),
+                user.getFullName(),
+                RolePermissionResolver.permissionsFor(user.getRole())
+        );
     }
+
 
     // ---------------- PASSWORD ENDPOINTS ----------------
 
