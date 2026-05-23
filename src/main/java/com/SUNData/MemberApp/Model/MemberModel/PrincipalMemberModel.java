@@ -41,6 +41,12 @@ public class PrincipalMemberModel {
     @CreationTimestamp
     private LocalDateTime registrationDate;
 
+    @Column(name = "registered_by_name")
+    private String registeredByName;
+
+    @Column(name = "registered_by_role")
+    private String registeredByRole;
+
     // Each principal member has exactly one next of kin
     @ManyToOne(cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "next_of_kin_id", nullable = false)
@@ -98,5 +104,21 @@ public class PrincipalMemberModel {
 
     public void setRegistrationDate(LocalDateTime registrationDate) {
         this.registrationDate = registrationDate;
+    }
+
+    public String getRegisteredByName() {
+        return registeredByName;
+    }
+
+    public void setRegisteredByName(String registeredByName) {
+        this.registeredByName = registeredByName;
+    }
+
+    public String getRegisteredByRole() {
+        return registeredByRole;
+    }
+
+    public void setRegisteredByRole(String registeredByRole) {
+        this.registeredByRole = registeredByRole;
     }
 }

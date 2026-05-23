@@ -52,8 +52,10 @@ public class SecurityConfig {
 
                         // PUBLIC
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/v1/auth/**").permitAll()
 
-                        // ADMIN (user management — still role-gated)
+                        // ADMIN
+                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
                         // PBAC member + navigation APIs (fine-grained via @PreAuthorize)

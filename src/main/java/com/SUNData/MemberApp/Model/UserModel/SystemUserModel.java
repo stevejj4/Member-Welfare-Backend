@@ -31,6 +31,9 @@ public class SystemUserModel {
     @Column(name = "reset_token")
     private String resetToken;
 
+    @Column(name = "must_change_password", nullable = false)
+    private boolean mustChangePassword = false;
+
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
@@ -60,6 +63,11 @@ public class SystemUserModel {
 
     public String getResetToken() { return resetToken; }
     public void setResetToken(String resetToken) { this.resetToken = resetToken; }
+
+    public boolean isMustChangePassword() { return mustChangePassword; }
+    public void setMustChangePassword(boolean mustChangePassword) {
+        this.mustChangePassword = mustChangePassword;
+    }
 
     public UserRole getRole() { return role; }
     public void setRole(UserRole role) { this.role = role; }

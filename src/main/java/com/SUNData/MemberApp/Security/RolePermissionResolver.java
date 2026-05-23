@@ -26,7 +26,8 @@ public final class RolePermissionResolver {
             case ADMIN -> List.of(
                     Permission.MEMBER_CREATE,
                     Permission.MEMBER_READ,
-                    Permission.MEMBER_WRITE
+                    Permission.MEMBER_WRITE,
+                    Permission.USER_MANAGEMENT
             );
             case COORDINATOR -> List.of(
                     Permission.MEMBER_CREATE,

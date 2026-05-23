@@ -9,6 +9,9 @@ import com.SUNData.MemberApp.Model.MemberModel.*;
 import com.SUNData.MemberApp.Model.UserModel.SystemUserModel;
 import com.SUNData.MemberApp.Repository.*;
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
@@ -209,6 +212,7 @@ public class AdminService {
         }
 
         PrincipalMemberModel principal = dto.toEntity();
+        stampRegistrar(principal);
 
         if (request.getNextOfKin() == null) {
             throw new ValidationException("Next Of Kin is mandatory");
@@ -353,5 +357,24 @@ public class AdminService {
         log.info("Deleted Next of Kin for Principal Member ID={}", principalId);
     }
 
+    private void stampRegistrar(PrincipalMemberModel principal) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return;
+        }
 
+        String email = authentication.getName();
+        String displayName = userRepo.findByEmail(email)
+                .map(SystemUserModel::getFullName)
+                .orElse(email);
+        principal.setRegisteredByName(displayName);
+
+        String role = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .filter(a -> a.startsWith("ROLE_"))
+                .map(a -> a.substring(5))
+                .findFirst()
+                .orElse("USER");
+        principal.setRegisteredByRole(role);
+    }
 }

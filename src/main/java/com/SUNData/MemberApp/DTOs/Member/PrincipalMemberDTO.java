@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class PrincipalMemberDTO {
     private Long id;
@@ -33,6 +34,12 @@ public class PrincipalMemberDTO {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
 
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime registrationDate;
+
+    private String registeredByName;
+
+    private String registeredByRole;
 
     // Default constructor for Jackson
     public PrincipalMemberDTO() {}
@@ -46,7 +53,10 @@ public class PrincipalMemberDTO {
         this.gender = model.getGender();
         this.phoneNumber = model.getPhoneNumber();
         this.groupName = model.getGroupName();
-        this.dateOfBirth = model.getDateOfBirth(); // <-- map it
+        this.dateOfBirth = model.getDateOfBirth();
+        this.registrationDate = model.getRegistrationDate();
+        this.registeredByName = model.getRegisteredByName();
+        this.registeredByRole = model.getRegisteredByRole();
     }
 
     // getters
@@ -61,7 +71,13 @@ public class PrincipalMemberDTO {
 
     public String getPhoneNumber() { return phoneNumber; }
     public String getGroupName() { return groupName; }
-    public LocalDate getDateOfBirth() { return dateOfBirth; } // <-- getter
+    public LocalDate getDateOfBirth() { return dateOfBirth; }
+
+    public LocalDateTime getRegistrationDate() { return registrationDate; }
+
+    public String getRegisteredByName() { return registeredByName; }
+
+    public String getRegisteredByRole() { return registeredByRole; }
 
     public PrincipalMemberModel toEntity() {
         PrincipalMemberModel model = new PrincipalMemberModel();

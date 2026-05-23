@@ -1,13 +1,8 @@
 package com.SUNData.MemberApp.Controller;
 
 import com.SUNData.MemberApp.DTOs.Member.*;
-import com.SUNData.MemberApp.DTOs.User.*;
-import com.SUNData.MemberApp.Enums.UserRole;
-import com.SUNData.MemberApp.Model.UserModel.SystemUserModel;
-import com.SUNData.MemberApp.Repository.SystemUserRepository;
 import com.SUNData.MemberApp.Service.admin.AdminService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,47 +12,9 @@ import java.util.List;
 public class AdminController {
 
     private final AdminService adminService;
-    private final SystemUserRepository systemUserRepository;
-    private final PasswordEncoder passwordEncoder;
 
-    public AdminController(AdminService adminService, SystemUserRepository systemUserRepository,
-                           PasswordEncoder passwordEncoder) {
+    public AdminController(AdminService adminService) {
         this.adminService = adminService;
-        this.systemUserRepository = systemUserRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    // ---------------- USER MANAGEMENT ----------------
-
-
-    // ✅ View all users
-    @GetMapping("/users")
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
-        return ResponseEntity.ok(adminService.getAllUsers());
-    }
-
-    @PostMapping("/register")
-    public String register(@RequestBody RegisterUserDTO request) {
-        SystemUserModel user = new SystemUserModel();
-        user.setEmail(request.getEmail());
-        user.setFullName(request.getFullName());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(request.getRole());
-        systemUserRepository.save(user);
-        return "User registered successfully";
-    }
-
-    // ✅ Reset any user's password
-    @PutMapping("/users/{id}/reset-password")
-    public ResponseEntity<Void> resetPassword(@PathVariable Long id, @RequestBody String newPassword) {
-        adminService.resetPassword(id, newPassword);
-        return ResponseEntity.noContent().build();
-    }
-
-    // ✅ Update user role (assign/revoke/update)
-    @PutMapping("/users/{id}/role")
-    public ResponseEntity<UserDTO> updateUserRole(@PathVariable Long id, @RequestBody UserRole newRole) {
-        return ResponseEntity.ok(adminService.updateUserRole(id, newRole));
     }
 
     // ---------------- MEMBER MANAGEMENT ----------------
