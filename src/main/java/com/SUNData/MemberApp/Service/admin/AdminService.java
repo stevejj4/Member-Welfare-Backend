@@ -82,8 +82,8 @@ public class AdminService {
     }
 
     // ---------------- MEMBER MANAGEMENT ----------------
-    // (Your existing member logic: register, update, patch, add dependants, etc.)
-    // I’ve kept all your methods intact: getAllMembers, registerFullMember, updatePrincipal,
+    // Existing member logic: register, update, patch, add dependants, etc.)
+    // Methods intact need to be intact: getAllMembers, registerFullMember, updatePrincipal,
     // patchPrincipal, updateNextOfKin, patchNextOfKin, addDependant, patchDependant,
     // deletePrincipal, deleteDependant, getFullMemberDetails, getFullMemberDetailsByNationalId.
 
@@ -236,7 +236,7 @@ public class AdminService {
         return getFullMemberDetails(savedPrincipal.getId());
     }
 
-    /** Full update of Principal Member (PUT-style) */
+    /** PUT -- Full update of Principal Member */
     @Transactional
     public PrincipalMemberDTO updatePrincipal(Long id, PrincipalMemberDTO dto) {
         PrincipalMemberModel existing = getPrincipalOrThrow(id);
@@ -250,7 +250,7 @@ public class AdminService {
         return new PrincipalMemberDTO(principalRepo.save(existing));
     }
 
-    /** Partial update of Principal Member (PATCH-style) */
+    /** PATCH -- Partial update of Principal Member */
     @Transactional
     public PrincipalMemberDTO patchPrincipal(Long id, PrincipalMemberDTO dto) {
         log.info("Patching Principal Member ID={}", id);
@@ -283,7 +283,7 @@ public class AdminService {
         return new NextOfKinDTO(saved.getNextOfKin());
     }
 
-    /** Partial update of Next of Kin (PATCH-style) */
+    /** Partial update of Next of Kin */
     @Transactional
     public NextOfKinDTO patchNextOfKin(Long principalId, NextOfKinDTO dto) {
         PrincipalMemberModel principal = getPrincipalOrThrow(principalId);
