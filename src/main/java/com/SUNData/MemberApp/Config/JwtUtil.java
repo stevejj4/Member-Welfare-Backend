@@ -93,6 +93,8 @@ public class JwtUtil {
      *
      * @param token The JWT string.
      * @return true if valid, false otherwise.
+     *
+     * -- Retrieves the custom "role" claim from the token body.
      */
     public boolean validateToken(String token) {
         try {
