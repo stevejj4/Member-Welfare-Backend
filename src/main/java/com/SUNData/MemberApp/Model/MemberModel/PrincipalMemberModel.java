@@ -18,13 +18,14 @@ public class PrincipalMemberModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String firstName;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String lastName;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
+    @Column(length =20)
     private LocalDate dateOfBirth;
 
     @Enumerated(EnumType.STRING)
@@ -48,13 +49,16 @@ public class PrincipalMemberModel {
     private String registeredByRole;
 
     // Each principal member has exactly one next of kin
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
     @JoinColumn(name = "next_of_kin_id", nullable = false)
     private NextOfKinModel nextOfKin;
 
     // Each principal member can have many dependants
     @OneToMany(mappedBy = "principalMember", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DependantModel> dependants;
+
+    @Version
+    private  Integer version;
 
     public PrincipalMemberModel() {}
 

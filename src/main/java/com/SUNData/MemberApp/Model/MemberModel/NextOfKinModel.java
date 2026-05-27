@@ -50,9 +50,12 @@ public class NextOfKinModel {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @Version
+    private Integer version;
+
     // Relationship with Principal Members (shared Next of Kin)
     // orphanRemoval = true -- ensures principal member removal, nextOfKin is also removed
-    @OneToMany(mappedBy = "nextOfKin", orphanRemoval = true)
+    @OneToMany(mappedBy = "nextOfKin", fetch = FetchType.LAZY)
     private List<PrincipalMemberModel> principalMembers;
 
     public NextOfKinModel() {}

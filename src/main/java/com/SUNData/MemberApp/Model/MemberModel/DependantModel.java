@@ -54,6 +54,9 @@ public class DependantModel {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @Version
+    private Integer version;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "principal_member_id")
     private PrincipalMemberModel principalMember;
