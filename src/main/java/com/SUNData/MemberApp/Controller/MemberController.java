@@ -48,7 +48,7 @@ public class MemberController {
     @PreAuthorize("hasAuthority('MEMBER_WRITE')")
     public ResponseEntity<PrincipalMemberDTO> updatePrincipal(
             @PathVariable Long id,
-            @RequestBody PrincipalMemberDTO dto) {
+            @Valid @RequestBody PrincipalMemberDTO dto) {
         return ResponseEntity.ok(memberService.updatePrincipal(id, dto));
     }
 
@@ -56,7 +56,7 @@ public class MemberController {
     @PreAuthorize("hasAuthority('MEMBER_WRITE')")
     public ResponseEntity<PrincipalMemberDTO> patchPrincipal(
             @PathVariable Long id,
-            @RequestBody PrincipalMemberDTO dto) {
+            @Valid @RequestBody PrincipalMemberDTO dto) {
         return ResponseEntity.ok(memberService.patchPrincipal(id, dto));
     }
 
@@ -64,7 +64,7 @@ public class MemberController {
     @PreAuthorize("hasAuthority('MEMBER_WRITE')")
     public ResponseEntity<NextOfKinDTO> updateNextOfKin(
             @PathVariable Long principalId,
-            @RequestBody NextOfKinDTO dto) {
+            @Valid @RequestBody NextOfKinDTO dto) {
         return ResponseEntity.ok(memberService.updateNextOfKin(principalId, dto));
     }
 
@@ -72,7 +72,7 @@ public class MemberController {
     @PreAuthorize("hasAuthority('MEMBER_WRITE')")
     public ResponseEntity<NextOfKinDTO> patchNextOfKin(
             @PathVariable Long principalId,
-            @RequestBody NextOfKinDTO dto) {
+            @Valid @RequestBody NextOfKinDTO dto) {
         return ResponseEntity.ok(memberService.patchNextOfKin(principalId, dto));
     }
 
@@ -87,7 +87,7 @@ public class MemberController {
     @PreAuthorize("hasAuthority('MEMBER_WRITE')")
     public ResponseEntity<DependantDTO> addDependant(
             @PathVariable Long principalId,
-            @RequestBody DependantDTO dto) {
+            @Valid @RequestBody DependantDTO dto) {
         return ResponseEntity.ok(memberService.addDependant(principalId, dto));
     }
 
@@ -95,7 +95,7 @@ public class MemberController {
     @PreAuthorize("hasAuthority('MEMBER_WRITE')")
     public ResponseEntity<DependantDTO> patchDependant(
             @PathVariable Long dependantId,
-            @RequestBody DependantDTO dto) {
+            @Valid @RequestBody DependantDTO dto) {
         return ResponseEntity.ok(memberService.patchDependant(dependantId, dto));
     }
 

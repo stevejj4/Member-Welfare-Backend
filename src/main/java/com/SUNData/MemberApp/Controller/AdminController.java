@@ -2,6 +2,7 @@ package com.SUNData.MemberApp.Controller;
 
 import com.SUNData.MemberApp.DTOs.Member.*;
 import com.SUNData.MemberApp.Service.admin.AdminService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,34 +40,34 @@ public class AdminController {
 
     // ✅ Register new member
     @PostMapping("/members/register")
-    public ResponseEntity<MemberDetailsDTO> registerMember(@RequestBody RegisterMemberRequestDTO request) {
+    public ResponseEntity<MemberDetailsDTO> registerMember(@Valid @RequestBody RegisterMemberRequestDTO request) {
         return ResponseEntity.ok(adminService.registerFullMember(request));
     }
 
     // ✅ Update principal member
     @PutMapping("/members/{id}")
-    public ResponseEntity<PrincipalMemberDTO> updatePrincipal(@PathVariable Long id,
+    public ResponseEntity<PrincipalMemberDTO> updatePrincipal(@Valid @PathVariable Long id,
                                                               @RequestBody PrincipalMemberDTO dto) {
         return ResponseEntity.ok(adminService.updatePrincipal(id, dto));
     }
 
     // ✅ Patch principal member
     @PatchMapping("/members/{id}")
-    public ResponseEntity<PrincipalMemberDTO> patchPrincipal(@PathVariable Long id,
+    public ResponseEntity<PrincipalMemberDTO> patchPrincipal(@Valid @PathVariable Long id,
                                                              @RequestBody PrincipalMemberDTO dto) {
         return ResponseEntity.ok(adminService.patchPrincipal(id, dto));
     }
 
     // ✅ Update Next of Kin
     @PutMapping("/members/{principalId}/next-of-kin")
-    public ResponseEntity<NextOfKinDTO> updateNextOfKin(@PathVariable Long principalId,
+    public ResponseEntity<NextOfKinDTO> updateNextOfKin(@Valid @PathVariable Long principalId,
                                                         @RequestBody NextOfKinDTO dto) {
         return ResponseEntity.ok(adminService.updateNextOfKin(principalId, dto));
     }
 
     // ✅ Patch Next of Kin
     @PatchMapping("/members/{principalId}/next-of-kin")
-    public ResponseEntity<NextOfKinDTO> patchNextOfKin(@PathVariable Long principalId,
+    public ResponseEntity<NextOfKinDTO> patchNextOfKin(@Valid @PathVariable Long principalId,
                                                        @RequestBody NextOfKinDTO dto) {
         return ResponseEntity.ok(adminService.patchNextOfKin(principalId, dto));
     }
@@ -79,14 +80,14 @@ public class AdminController {
 
     // ✅ Add dependant
     @PostMapping("/members/{principalId}/dependants")
-    public ResponseEntity<DependantDTO> addDependant(@PathVariable Long principalId,
+    public ResponseEntity<DependantDTO> addDependant(@Valid @PathVariable Long principalId,
                                                      @RequestBody DependantDTO dto) {
         return ResponseEntity.ok(adminService.addDependant(principalId, dto));
     }
 
     // ✅ Patch dependant
     @PatchMapping("/members/dependants/{dependantId}")
-    public ResponseEntity<DependantDTO> patchDependant(@PathVariable Long dependantId,
+    public ResponseEntity<DependantDTO> patchDependant(@Valid @PathVariable Long dependantId,
                                                        @RequestBody DependantDTO dto) {
         return ResponseEntity.ok(adminService.patchDependant(dependantId, dto));
     }
