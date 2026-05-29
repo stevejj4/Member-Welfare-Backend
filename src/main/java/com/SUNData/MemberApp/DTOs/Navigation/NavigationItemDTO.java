@@ -13,7 +13,8 @@ package com.SUNData.MemberApp.DTOs.Navigation;
  * Each navigation item defines:
  * - The display text shown in the UI
  * - The icon identifier used by the frontend
- * - The route/path for navigation
+ * - The route/path for navigation oooo
+ *
  * </p>
  */
 public class NavigationItemDTO {
