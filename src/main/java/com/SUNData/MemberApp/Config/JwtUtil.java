@@ -29,8 +29,11 @@ public class JwtUtil {
     // In production, store this securely (e.g., environment variable).
     private static final String SECRET = "mySuperSecretKeyForJwtGeneration1234567890";
 
-    // 🔹 Token expiration time (8 hours here).
-    private static final long EXPIRATION = 1000 * 60 * 60 * 8;
+    // Access token expiration (15 minutes).
+    private static final long ACCESS_EXPIRATION = 1000 * 60 * 15;
+
+    // Refresh token expiration (7 days).
+    private static final long REFRESH_EXPIRATION = 1000L * 60 * 60 * 24 * 7;
 
     /**
      * Returns the signing key used for JWT operations.
@@ -48,12 +51,20 @@ public class JwtUtil {
      * @return A signed JWT string.
      */
     public String generateToken(String username, String role) {
+        return buildToken(username, role, ACCESS_EXPIRATION);
+    }
+
+    public String generateRefreshToken(String username, String role) {
+        return buildToken(username, role, REFRESH_EXPIRATION);
+    }
+
+    private String buildToken(String username, String role, long expirationMs) {
         return Jwts.builder()
-                .setSubject(username) // "sub" claim
-                .claim("role", role)  // custom claim for role
-                .setIssuedAt(new Date()) // issue time
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION)) // expiry
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256) // sign with HS256
+                .setSubject(username)
+                .claim("role", role)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
