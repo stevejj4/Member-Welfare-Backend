@@ -1,7 +1,6 @@
 package com.SUNData.MemberApp.Model.MemberModel;
 
 import com.SUNData.MemberApp.Enums.GenderType;
-import com.SUNData.MemberApp.Model.UserModel.SystemUserModel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -48,9 +47,9 @@ public class PrincipalMemberModel {
     @Column(name = "registered_by_role")
     private String registeredByRole;
 
-    // Each principal member has exactly one next of kin
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, optional = false)
-    @JoinColumn(name = "next_of_kin_id", nullable = false)
+    // New registrations require next of kin, but existing records may temporarily be missing it.
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "next_of_kin_id")
     private NextOfKinModel nextOfKin;
 
     // Each principal member can have many dependants

@@ -61,7 +61,6 @@ public class SecurityConfig {
 
                         // ADMIN
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
                         // PBAC member + navigation APIs (fine-grained via @PreAuthorize)
                         .requestMatchers("/api/v1/members/**").authenticated()

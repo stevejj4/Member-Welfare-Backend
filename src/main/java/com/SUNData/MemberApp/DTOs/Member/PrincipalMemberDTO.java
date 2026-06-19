@@ -22,7 +22,7 @@ public class PrincipalMemberDTO {
     @NotBlank(message = "National ID is required")
     private String nationalID;
 
-    @NotNull(message = "")
+    @NotNull(message = "Gender is required")
     private GenderType gender;
 
     @NotBlank(message = "Principal member must have a phone number")
@@ -65,7 +65,7 @@ public class PrincipalMemberDTO {
     public String getLastName() { return lastName; }
     public String getNationalID() { return nationalID; }
 
-    public @NotNull(message = "") GenderType getGender() {
+    public GenderType getGender() {
         return gender;
     }
 

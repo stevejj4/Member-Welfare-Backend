@@ -45,6 +45,15 @@ public interface PrincipalMemberRepository extends JpaRepository<PrincipalMember
     Optional<PrincipalMemberModel> findByNationalID(String nationalID);
 
     /**
+     * Finds a principal member by their phone number.
+     *
+     * @param phoneNumber the phone number of the principal member
+     * @return an {@link Optional} containing the principal member if found,
+     *         or empty if no member exists with the given phone number
+     */
+    Optional<PrincipalMemberModel> findByPhoneNumber(String phoneNumber);
+
+    /**
      * Retrieves all principal members belonging to a specific group.
      * <p>
      * Useful for group-based queries, such as county or community membership.
