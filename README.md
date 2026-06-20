@@ -32,6 +32,7 @@ A Spring Boot REST API for managing Principal Member registrations as part of th
 - **Spring Data JPA** (Hibernate)
 - **Mysql database**
 - **Maven** (Build Tool)
+- **Spring Security**
 
 ## 📦 Prerequisites
 - **JDK 17** or higher
