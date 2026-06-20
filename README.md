@@ -1,6 +1,6 @@
 # Member Registration System
 
-A Spring Boot REST API for managing Principal Member registrations as part of the SUN Data system.
+A Spring Boot REST API for managing Principal Member registrations as part of the Member welfare Data system.
 
 ## 🚀 Features
 - **Register Members**: POST endpoint to save new member data and update member info
