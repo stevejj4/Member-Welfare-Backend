@@ -1,5 +1,6 @@
 package com.SUNData.MemberApp.DTOs.Auth;
 
+// token refresh happens at the server
 public class TokenRefreshResponseDTO {
     private String token;
 
