@@ -25,6 +25,36 @@ A Spring Boot REST API for managing Principal Member registrations as part of th
 ***Memthod:** `GET`
 **Description:** Get individual Principal Members in the `from all tables` table.
 
+### 3. Check Duplicate Member Details
+**URL:** `http://localhost:8080/api/v1/members/exists?nationalId={value}&phoneNumber={value}`  
+**Method:** `GET`  
+**Auth:** Requires an authenticated user with member read or create permission.
+
+**Description:**  
+Checks whether a Principal Member National ID or phone number already exists before the frontend moves from Principal Details to Next of Kin.
+
+This endpoint does **not** return any member details, names, IDs, or records. It only returns two boolean values using the `MemberExistsResponseDTO` response object.
+
+**Example response:**
+```json
+{
+  "nationalIdExists": true,
+  "phoneNumberExists": false
+}
+```
+
+**Validation behavior:**
+- `nationalId` and `phoneNumber` are optional, but at least one must be provided.
+- Values are trimmed before checking.
+- If both are missing or blank, the API returns `400 Bad Request`.
+
+**Performance note:**  
+The backend uses efficient repository methods:
+- `existsByNationalID(String nationalID)`
+- `existsByPhoneNumber(String phoneNumber)`
+
+Because `nationalID` and `phoneNumber` are unique fields, the database should have indexes for them. With indexes, each lookup is approximately **O(log n)**, so even with a very large table, such as `100,000,000` members, the database does not scan every row. Without indexes, the lookup would be **O(n)** and much slower.
+
 
 ## 🛠️ Tech Stack
 - **Java 17**
