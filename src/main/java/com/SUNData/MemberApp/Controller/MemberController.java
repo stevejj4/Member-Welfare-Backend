@@ -32,6 +32,14 @@ public class MemberController {
         return ResponseEntity.ok(memberService.getAllMembers());
     }
 
+    @GetMapping("/exists")
+    @PreAuthorize("hasAnyAuthority('MEMBER_READ', 'MEMBER_CREATE')")
+    public ResponseEntity<MemberExistsResponseDTO> memberExists(
+            @RequestParam(required = false) String nationalId,
+            @RequestParam(required = false) String phoneNumber) {
+        return ResponseEntity.ok(memberService.memberExists(nationalId, phoneNumber));
+    }
+
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('MEMBER_READ')")
     public ResponseEntity<MemberDetailsDTO> getMemberById(@PathVariable Long id) {

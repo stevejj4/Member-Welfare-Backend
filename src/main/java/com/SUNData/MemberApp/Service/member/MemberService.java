@@ -82,6 +82,23 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
+    public MemberExistsResponseDTO memberExists(String nationalId, String phoneNumber) {
+        String normalizedNationalId = normalizeQueryValue(nationalId);
+        String normalizedPhoneNumber = normalizeQueryValue(phoneNumber);
+
+        if (normalizedNationalId == null && normalizedPhoneNumber == null) {
+            throw new ValidationException("At least one of nationalId or phoneNumber must be provided");
+        }
+
+        boolean nationalIdExists = normalizedNationalId != null
+                && principalRepo.existsByNationalID(normalizedNationalId);
+        boolean phoneNumberExists = normalizedPhoneNumber != null
+                && principalRepo.existsByPhoneNumber(normalizedPhoneNumber);
+
+        return new MemberExistsResponseDTO(nationalIdExists, phoneNumberExists);
+    }
+
+    @Transactional(readOnly = true)
     public MemberDetailsDTO getMemberById(Long id) {
         return toMemberDetails(getPrincipalOrThrow(id));
     }
@@ -260,6 +277,15 @@ public class MemberService {
                 .ifPresent(existing -> {
                     throw new ValidationException("Phone number already exists");
                 });
+    }
+
+    private String normalizeQueryValue(String value) {
+        if (value == null) {
+            return null;
+        }
+
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 
     private void applyPrincipalPatch(PrincipalMemberModel existing, PrincipalMemberDTO dto) {
