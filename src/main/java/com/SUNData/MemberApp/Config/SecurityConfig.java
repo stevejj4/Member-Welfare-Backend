@@ -62,6 +62,10 @@ public class SecurityConfig {
                         // ADMIN
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
 
+                        // Location/group lookups are authenticated and further scoped in controllers/services.
+                        .requestMatchers("/api/v1/locations/**").authenticated()
+                        .requestMatchers("/api/v1/groups/**").authenticated()
+
                         // PBAC member + navigation APIs (fine-grained via @PreAuthorize)
                         .requestMatchers("/api/v1/members/**").authenticated()
                         .requestMatchers("/api/v1/me/**").authenticated()

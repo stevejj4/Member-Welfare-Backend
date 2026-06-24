@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.List;
+
 public class CreateUserRequestDTO {
 
     @NotBlank(message = "First name is required")
@@ -19,6 +21,12 @@ public class CreateUserRequestDTO {
 
     @NotNull(message = "Role is required")
     private UserRole assignedRole;
+
+    private Long countyId;
+
+    private Long subCountyId;
+
+    private List<Long> wardIds;
 
     public String getFirstName() {
         return firstName;
@@ -50,5 +58,29 @@ public class CreateUserRequestDTO {
 
     public void setAssignedRole(UserRole assignedRole) {
         this.assignedRole = assignedRole;
+    }
+
+    public Long getCountyId() {
+        return countyId;
+    }
+
+    public void setCountyId(Long countyId) {
+        this.countyId = countyId;
+    }
+
+    public Long getSubCountyId() {
+        return subCountyId;
+    }
+
+    public void setSubCountyId(Long subCountyId) {
+        this.subCountyId = subCountyId;
+    }
+
+    public List<Long> getWardIds() {
+        return wardIds;
+    }
+
+    public void setWardIds(List<Long> wardIds) {
+        this.wardIds = wardIds;
     }
 }

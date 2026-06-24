@@ -5,6 +5,7 @@ import com.SUNData.MemberApp.Config.JwtUtil;
 import com.SUNData.MemberApp.DTOs.Auth.AuthResponseDTO;
 import com.SUNData.MemberApp.DTOs.Auth.LoginRequestDTO;
 import com.SUNData.MemberApp.DTOs.Auth.TokenRefreshResponseDTO;
+import com.SUNData.MemberApp.Model.LocationModel.WardModel;
 import com.SUNData.MemberApp.Model.UserModel.SystemUserModel;
 import com.SUNData.MemberApp.Repository.SystemUserRepository;
 import com.SUNData.MemberApp.Security.RolePermissionResolver;
@@ -86,7 +87,13 @@ public class AuthController {
                 user.getId(),
                 user.getEmail(),
                 user.getFullName(),
-                RolePermissionResolver.permissionsFor(user.getRole())
+                RolePermissionResolver.permissionsFor(user.getRole()),
+                user.getAssignedCounty() != null ? user.getAssignedCounty().getId() : null,
+                user.getAssignedCounty() != null ? user.getAssignedCounty().getName() : null,
+                user.getAssignedSubCounty() != null ? user.getAssignedSubCounty().getId() : null,
+                user.getAssignedSubCounty() != null ? user.getAssignedSubCounty().getName() : null,
+                user.getAssignedWards().stream().map(WardModel::getId).toList(),
+                user.getAssignedWards().stream().map(WardModel::getName).toList()
         );
     }
 

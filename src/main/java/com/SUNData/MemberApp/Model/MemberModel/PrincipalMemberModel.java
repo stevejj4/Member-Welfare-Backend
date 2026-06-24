@@ -1,6 +1,11 @@
 package com.SUNData.MemberApp.Model.MemberModel;
 
 import com.SUNData.MemberApp.Enums.GenderType;
+import com.SUNData.MemberApp.Enums.RegistrationType;
+import com.SUNData.MemberApp.Model.GroupModel.MemberGroupModel;
+import com.SUNData.MemberApp.Model.LocationModel.CountyModel;
+import com.SUNData.MemberApp.Model.LocationModel.SubCountyModel;
+import com.SUNData.MemberApp.Model.LocationModel.WardModel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -37,6 +42,26 @@ public class PrincipalMemberModel {
     private String phoneNumber;
 
     private String groupName;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "registration_type")
+    private RegistrationType registrationType;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "county_id")
+    private CountyModel county;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sub_county_id")
+    private SubCountyModel subCounty;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ward_id")
+    private WardModel ward;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_id")
+    private MemberGroupModel group;
 
     @CreationTimestamp
     private LocalDateTime registrationDate;
@@ -94,6 +119,21 @@ public class PrincipalMemberModel {
 
     public String getGroupName() { return groupName; }
     public void setGroupName(String groupName) { this.groupName = groupName; }
+
+    public RegistrationType getRegistrationType() { return registrationType; }
+    public void setRegistrationType(RegistrationType registrationType) { this.registrationType = registrationType; }
+
+    public CountyModel getCounty() { return county; }
+    public void setCounty(CountyModel county) { this.county = county; }
+
+    public SubCountyModel getSubCounty() { return subCounty; }
+    public void setSubCounty(SubCountyModel subCounty) { this.subCounty = subCounty; }
+
+    public WardModel getWard() { return ward; }
+    public void setWard(WardModel ward) { this.ward = ward; }
+
+    public MemberGroupModel getGroup() { return group; }
+    public void setGroup(MemberGroupModel group) { this.group = group; }
 
     public NextOfKinModel getNextOfKin() { return nextOfKin; }
     public void setNextOfKin(NextOfKinModel nextOfKin) { this.nextOfKin = nextOfKin; }

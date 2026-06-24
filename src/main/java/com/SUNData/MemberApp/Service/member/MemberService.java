@@ -1,15 +1,25 @@
 package com.SUNData.MemberApp.Service.member;
 
 import com.SUNData.MemberApp.DTOs.Member.*;
+import com.SUNData.MemberApp.Enums.RegistrationType;
+import com.SUNData.MemberApp.Enums.UserRole;
 import com.SUNData.MemberApp.Exceptions.ResourceNotFoundException;
 import com.SUNData.MemberApp.Exceptions.ValidationException;
+import com.SUNData.MemberApp.Model.GroupModel.MemberGroupModel;
+import com.SUNData.MemberApp.Model.LocationModel.CountyModel;
+import com.SUNData.MemberApp.Model.LocationModel.SubCountyModel;
+import com.SUNData.MemberApp.Model.LocationModel.WardModel;
 import com.SUNData.MemberApp.Model.MemberModel.DependantModel;
 import com.SUNData.MemberApp.Model.MemberModel.NextOfKinModel;
 import com.SUNData.MemberApp.Model.MemberModel.PrincipalMemberModel;
 import com.SUNData.MemberApp.Model.UserModel.SystemUserModel;
+import com.SUNData.MemberApp.Repository.CountyRepository;
 import com.SUNData.MemberApp.Repository.DependantRepository;
 import com.SUNData.MemberApp.Repository.PrincipalMemberRepository;
+import com.SUNData.MemberApp.Repository.SubCountyRepository;
 import com.SUNData.MemberApp.Repository.SystemUserRepository;
+import com.SUNData.MemberApp.Repository.WardRepository;
+import com.SUNData.MemberApp.Service.group.GroupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -19,6 +29,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 public class MemberService {
@@ -28,14 +40,26 @@ public class MemberService {
     private final PrincipalMemberRepository principalRepo;
     private final DependantRepository dependantRepo;
     private final SystemUserRepository userRepo;
+    private final CountyRepository countyRepo;
+    private final SubCountyRepository subCountyRepo;
+    private final WardRepository wardRepo;
+    private final GroupService groupService;
 
     public MemberService(
             PrincipalMemberRepository principalRepo,
             DependantRepository dependantRepo,
-            SystemUserRepository userRepo) {
+            SystemUserRepository userRepo,
+            CountyRepository countyRepo,
+            SubCountyRepository subCountyRepo,
+            WardRepository wardRepo,
+            GroupService groupService) {
         this.principalRepo = principalRepo;
         this.dependantRepo = dependantRepo;
         this.userRepo = userRepo;
+        this.countyRepo = countyRepo;
+        this.subCountyRepo = subCountyRepo;
+        this.wardRepo = wardRepo;
+        this.groupService = groupService;
     }
 
     @Transactional
@@ -53,6 +77,7 @@ public class MemberService {
 
         PrincipalMemberModel principal = dto.toEntity();
         stampRegistrar(principal);
+        applyRegistrationScope(principal, dto);
 
         NextOfKinModel kin = request.getNextOfKin().toEntity();
         principal.setNextOfKin(kin);
@@ -75,8 +100,9 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public List<MemberDetailsDTO> getAllMembers() {
-        log.info("Fetching all principal members");
-        return principalRepo.findAll().stream()
+        SystemUserModel user = groupService.currentUser();
+        log.info("Fetching principal members for user={} role={}", user.getEmail(), user.getRole());
+        return getVisiblePrincipals(user).stream()
                 .map(this::toMemberDetails)
                 .toList();
     }
@@ -100,12 +126,16 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public MemberDetailsDTO getMemberById(Long id) {
-        return toMemberDetails(getPrincipalOrThrow(id));
+        PrincipalMemberModel principal = getPrincipalOrThrow(id);
+        validateCurrentUserCanViewPrincipal(principal);
+        return toMemberDetails(principal);
     }
 
     @Transactional(readOnly = true)
     public MemberDetailsDTO getMemberByNationalId(String nationalId) {
-        return toMemberDetails(getPrincipalByNationalIdOrThrow(nationalId));
+        PrincipalMemberModel principal = getPrincipalByNationalIdOrThrow(nationalId);
+        validateCurrentUserCanViewPrincipal(principal);
+        return toMemberDetails(principal);
     }
 
     @Transactional
@@ -121,6 +151,7 @@ public class MemberService {
         existing.setPhoneNumber(dto.getPhoneNumber());
         existing.setDateOfBirth(dto.getDateOfBirth());
         existing.setGroupName(dto.getGroupName());
+        applyRegistrationScope(existing, dto);
 
         log.info("Updated Principal Member ID={}", id);
         return new PrincipalMemberDTO(principalRepo.save(existing));
@@ -139,10 +170,55 @@ public class MemberService {
         }
 
         applyPrincipalPatch(existing, dto);
+        if (hasLocationOrGroupPatch(dto)) {
+            applyRegistrationScope(existing, dto);
+        }
 
         PrincipalMemberModel updated = principalRepo.save(existing);
         log.info("Successfully patched Principal Member ID={}", id);
         return new PrincipalMemberDTO(updated);
+    }
+
+    @Transactional
+    public MemberDetailsDTO transferMember(Long id, TransferMemberRequestDTO request) {
+        PrincipalMemberModel principal = getPrincipalOrThrow(id);
+        WardModel ward = getWardOrThrow(request.getWardId());
+        SubCountyModel subCounty = ward.getSubCounty();
+        CountyModel county = subCounty.getCounty();
+
+        groupService.validateUserCanAccessWard(groupService.currentUser(), ward);
+
+        RegistrationType registrationType = request.getRegistrationType() != null
+                ? request.getRegistrationType()
+                : RegistrationType.INDIVIDUAL;
+
+        principal.setCounty(county);
+        principal.setSubCounty(subCounty);
+        principal.setWard(ward);
+        principal.setRegistrationType(registrationType);
+
+        if (registrationType == RegistrationType.GROUP) {
+            if (request.getGroupId() == null) {
+                throw new ValidationException("Group is required for group transfer", Map.of(
+                        "groupId", "Group is required for group transfer"
+                ));
+            }
+
+            MemberGroupModel group = groupService.getAccessibleGroupOrThrow(
+                    request.getGroupId(),
+                    ward.getId()
+            );
+            principal.setGroup(group);
+            principal.setGroupName(group.getName());
+        } else {
+            principal.setGroup(null);
+            principal.setGroupName(null);
+        }
+
+        PrincipalMemberModel updated = principalRepo.save(principal);
+        log.info("Transferred Principal Member ID={} to Ward ID={} and Group ID={}",
+                id, ward.getId(), request.getGroupId());
+        return toMemberDetails(updated);
     }
 
     @Transactional
@@ -231,6 +307,48 @@ public class MemberService {
         return new MemberDetailsDTO(new PrincipalMemberDTO(principal), kinDTO, dependantDTOs);
     }
 
+    public List<PrincipalMemberDTO> getAccessibleMembersForGroup(Long groupId) {
+        return principalRepo.findByGroupId(groupId).stream()
+                .peek(this::validateCurrentUserCanViewPrincipal)
+                .map(PrincipalMemberDTO::new)
+                .toList();
+    }
+
+    private List<PrincipalMemberModel> getVisiblePrincipals(SystemUserModel user) {
+        if (user.getRole() == UserRole.ADMIN) {
+            return principalRepo.findAll();
+        }
+
+        if (user.getRole() == UserRole.COORDINATOR) {
+            if (user.getAssignedCounty() != null) {
+                return principalRepo.findByCountyId(user.getAssignedCounty().getId());
+            }
+            if (user.getAssignedSubCounty() != null) {
+                return principalRepo.findBySubCountyId(user.getAssignedSubCounty().getId());
+            }
+            return List.of();
+        }
+
+        if (user.getAssignedWards() == null || user.getAssignedWards().isEmpty()) {
+            return List.of();
+        }
+
+        Set<Long> wardIds = user.getAssignedWards().stream()
+                .map(WardModel::getId)
+                .collect(java.util.stream.Collectors.toSet());
+        return principalRepo.findByWardIdIn(wardIds);
+    }
+
+    private void validateCurrentUserCanViewPrincipal(PrincipalMemberModel principal) {
+        if (principal.getWard() == null) {
+            if (groupService.currentUser().getRole() == UserRole.ADMIN) {
+                return;
+            }
+            throw new ValidationException("Member is not assigned to your working area");
+        }
+        groupService.validateUserCanAccessWard(groupService.currentUser(), principal.getWard());
+    }
+
     private PrincipalMemberModel getPrincipalOrThrow(Long id) {
         return principalRepo.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Principal Member not found: " + id));
@@ -255,6 +373,102 @@ public class MemberService {
         }
     }
 
+    private void applyRegistrationScope(PrincipalMemberModel principal, PrincipalMemberDTO dto) {
+        RegistrationType registrationType = dto.getRegistrationType() != null
+                ? dto.getRegistrationType()
+                : principal.getRegistrationType();
+        if (registrationType == null) {
+            throw new ValidationException("Registration type is required", Map.of(
+                    "principal.registrationType", "Registration type is required"
+            ));
+        }
+
+        Long countyId = dto.getCountyId() != null
+                ? dto.getCountyId()
+                : principal.getCounty() != null ? principal.getCounty().getId() : null;
+        Long subCountyId = dto.getSubCountyId() != null
+                ? dto.getSubCountyId()
+                : principal.getSubCounty() != null ? principal.getSubCounty().getId() : null;
+        Long wardId = dto.getWardId() != null
+                ? dto.getWardId()
+                : principal.getWard() != null ? principal.getWard().getId() : null;
+
+        CountyModel county = getCountyOrThrow(countyId);
+        SubCountyModel subCounty = getSubCountyOrThrow(subCountyId);
+        WardModel ward = getWardOrThrow(wardId);
+
+        groupService.validateLocationHierarchy(county, subCounty, ward);
+        groupService.validateUserCanAccessWard(groupService.currentUser(), ward);
+
+        principal.setRegistrationType(registrationType);
+        principal.setCounty(county);
+        principal.setSubCounty(subCounty);
+        principal.setWard(ward);
+
+        if (registrationType == RegistrationType.GROUP) {
+            Long groupId = dto.getGroupId() != null
+                    ? dto.getGroupId()
+                    : principal.getGroup() != null ? principal.getGroup().getId() : null;
+            if (groupId == null) {
+                throw new ValidationException("Group is required for group member registration", Map.of(
+                        "principal.groupId", "Group is required for group member registration"
+                ));
+            }
+
+            MemberGroupModel group = groupService.getAccessibleGroupOrThrow(groupId, ward.getId());
+            principal.setGroup(group);
+            principal.setGroupName(group.getName());
+            return;
+        }
+
+        principal.setGroup(null);
+        principal.setGroupName(null);
+    }
+
+    private boolean hasLocationOrGroupPatch(PrincipalMemberDTO dto) {
+        return dto.getRegistrationType() != null
+                || dto.getCountyId() != null
+                || dto.getSubCountyId() != null
+                || dto.getWardId() != null
+                || dto.getGroupId() != null;
+    }
+
+    private CountyModel getCountyOrThrow(Long countyId) {
+        if (countyId == null) {
+            throw new ValidationException("County is required", Map.of(
+                    "principal.countyId", "County is required"
+            ));
+        }
+        return countyRepo.findById(countyId)
+                .orElseThrow(() -> new ValidationException("County not found", Map.of(
+                        "principal.countyId", "County not found"
+                )));
+    }
+
+    private SubCountyModel getSubCountyOrThrow(Long subCountyId) {
+        if (subCountyId == null) {
+            throw new ValidationException("Sub-county is required", Map.of(
+                    "principal.subCountyId", "Sub-county is required"
+            ));
+        }
+        return subCountyRepo.findById(subCountyId)
+                .orElseThrow(() -> new ValidationException("Sub-county not found", Map.of(
+                        "principal.subCountyId", "Sub-county not found"
+                )));
+    }
+
+    private WardModel getWardOrThrow(Long wardId) {
+        if (wardId == null) {
+            throw new ValidationException("Ward is required", Map.of(
+                    "principal.wardId", "Ward is required"
+            ));
+        }
+        return wardRepo.findById(wardId)
+                .orElseThrow(() -> new ValidationException("Ward not found", Map.of(
+                        "principal.wardId", "Ward not found"
+                )));
+    }
+
     private void validateUniqueNationalId(String nationalId, Long currentMemberId) {
         if (nationalId == null) {
             return;
@@ -263,7 +477,9 @@ public class MemberService {
         principalRepo.findByNationalID(nationalId)
                 .filter(existing -> !existing.getId().equals(currentMemberId))
                 .ifPresent(existing -> {
-                    throw new ValidationException("National ID already exists");
+                    throw new ValidationException("National ID already exists", Map.of(
+                            "principal.nationalID", "National ID already exists"
+                    ));
                 });
     }
 
@@ -275,7 +491,9 @@ public class MemberService {
         principalRepo.findByPhoneNumber(phoneNumber)
                 .filter(existing -> !existing.getId().equals(currentMemberId))
                 .ifPresent(existing -> {
-                    throw new ValidationException("Phone number already exists");
+                    throw new ValidationException("Phone number already exists", Map.of(
+                            "principal.phoneNumber", "Phone number already exists"
+                    ));
                 });
     }
 

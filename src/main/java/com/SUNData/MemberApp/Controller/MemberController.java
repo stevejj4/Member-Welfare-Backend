@@ -68,6 +68,14 @@ public class MemberController {
         return ResponseEntity.ok(memberService.patchPrincipal(id, dto));
     }
 
+    @PatchMapping("/{id}/transfer")
+    @PreAuthorize("hasAuthority('MEMBER_WRITE')")
+    public ResponseEntity<MemberDetailsDTO> transferMember(
+            @PathVariable Long id,
+            @Valid @RequestBody TransferMemberRequestDTO request) {
+        return ResponseEntity.ok(memberService.transferMember(id, request));
+    }
+
     @PutMapping("/{principalId}/next-of-kin")
     @PreAuthorize("hasAuthority('MEMBER_WRITE')")
     public ResponseEntity<NextOfKinDTO> updateNextOfKin(

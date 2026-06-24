@@ -27,17 +27,23 @@ public final class RolePermissionResolver {
                     Permission.MEMBER_CREATE,
                     Permission.MEMBER_READ,
                     Permission.MEMBER_WRITE,
+                    Permission.GROUP_CREATE,
+                    Permission.GROUP_READ,
                     Permission.USER_MANAGEMENT
             );
             case COORDINATOR -> List.of(
                     Permission.MEMBER_CREATE,
                     Permission.MEMBER_READ,
-                    Permission.MEMBER_WRITE
+                    Permission.MEMBER_WRITE,
+                    Permission.GROUP_CREATE,
+                    Permission.GROUP_READ
             );
             case FACILITATOR -> List.of(
                     Permission.MEMBER_CREATE,
                     Permission.MEMBER_READ,
-                    Permission.MEMBER_WRITE
+                    Permission.MEMBER_WRITE,
+                    Permission.GROUP_CREATE,
+                    Permission.GROUP_READ
             );
         };
     }

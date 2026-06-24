@@ -3,6 +3,7 @@ package com.SUNData.MemberApp.Repository;
 import com.SUNData.MemberApp.Model.MemberModel.PrincipalMemberModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.List;
 
@@ -52,6 +53,14 @@ public interface PrincipalMemberRepository extends JpaRepository<PrincipalMember
      *         or empty if no member exists with the given phone number
      */
     Optional<PrincipalMemberModel> findByPhoneNumber(String phoneNumber);
+
+    List<PrincipalMemberModel> findByCountyId(Long countyId);
+
+    List<PrincipalMemberModel> findBySubCountyId(Long subCountyId);
+
+    List<PrincipalMemberModel> findByWardIdIn(Collection<Long> wardIds);
+
+    List<PrincipalMemberModel> findByGroupId(Long groupId);
 
     /**
      * Retrieves all principal members belonging to a specific group.

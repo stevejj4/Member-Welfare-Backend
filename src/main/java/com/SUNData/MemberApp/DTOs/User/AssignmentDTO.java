@@ -3,15 +3,10 @@ package com.SUNData.MemberApp.DTOs.User;
 import com.SUNData.MemberApp.Enums.UserRole;
 import com.SUNData.MemberApp.Model.LocationModel.WardModel;
 import com.SUNData.MemberApp.Model.UserModel.SystemUserModel;
-import com.fasterxml.jackson.annotation.JsonFormat;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-public class UserDTO {
-    private Long id;
-    private String email;
-    private String fullName;
+public class AssignmentDTO {
     private UserRole role;
     private Long countyId;
     private String countyName;
@@ -20,15 +15,9 @@ public class UserDTO {
     private List<Long> wardIds;
     private List<String> wardNames;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime createdAt;
+    public AssignmentDTO() {}
 
-    public UserDTO() {}
-
-    public UserDTO(SystemUserModel user) {
-        this.id = user.getId();
-        this.email = user.getEmail();
-        this.fullName = user.getFullName();
+    public AssignmentDTO(SystemUserModel user) {
         this.role = user.getRole();
         if (user.getAssignedCounty() != null) {
             this.countyId = user.getAssignedCounty().getId();
@@ -40,12 +29,8 @@ public class UserDTO {
         }
         this.wardIds = user.getAssignedWards().stream().map(WardModel::getId).toList();
         this.wardNames = user.getAssignedWards().stream().map(WardModel::getName).toList();
-        this.createdAt = user.getCreatedAt();
     }
 
-    public Long getId() { return id; }
-    public String getEmail() { return email; }
-    public String getFullName() { return fullName; }
     public UserRole getRole() { return role; }
     public Long getCountyId() { return countyId; }
     public String getCountyName() { return countyName; }
@@ -53,6 +38,4 @@ public class UserDTO {
     public String getSubCountyName() { return subCountyName; }
     public List<Long> getWardIds() { return wardIds; }
     public List<String> getWardNames() { return wardNames; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
 }
-

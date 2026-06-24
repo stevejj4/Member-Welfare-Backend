@@ -1,14 +1,16 @@
 package com.SUNData.MemberApp.Model.UserModel;
 
 import com.SUNData.MemberApp.Enums.UserRole;
-import com.SUNData.MemberApp.Model.MemberModel.PrincipalMemberModel;
+import com.SUNData.MemberApp.Model.LocationModel.CountyModel;
+import com.SUNData.MemberApp.Model.LocationModel.SubCountyModel;
+import com.SUNData.MemberApp.Model.LocationModel.WardModel;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "system_user")
@@ -36,6 +38,22 @@ public class SystemUserModel {
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "assigned_county_id")
+    private CountyModel assignedCounty;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "assigned_sub_county_id")
+    private SubCountyModel assignedSubCounty;
+
+    @ManyToMany
+    @JoinTable(
+            name = "system_user_assigned_wards",
+            joinColumns = @JoinColumn(name = "system_user_id"),
+            inverseJoinColumns = @JoinColumn(name = "ward_id")
+    )
+    private Set<WardModel> assignedWards = new HashSet<>();
 
     // Audit fields
     @CreationTimestamp
@@ -71,6 +89,15 @@ public class SystemUserModel {
 
     public UserRole getRole() { return role; }
     public void setRole(UserRole role) { this.role = role; }
+
+    public CountyModel getAssignedCounty() { return assignedCounty; }
+    public void setAssignedCounty(CountyModel assignedCounty) { this.assignedCounty = assignedCounty; }
+
+    public SubCountyModel getAssignedSubCounty() { return assignedSubCounty; }
+    public void setAssignedSubCounty(SubCountyModel assignedSubCounty) { this.assignedSubCounty = assignedSubCounty; }
+
+    public Set<WardModel> getAssignedWards() { return assignedWards; }
+    public void setAssignedWards(Set<WardModel> assignedWards) { this.assignedWards = assignedWards; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

@@ -1,6 +1,7 @@
 package com.SUNData.MemberApp.DTOs.Member;
 
 import com.SUNData.MemberApp.Enums.GenderType;
+import com.SUNData.MemberApp.Enums.RegistrationType;
 import com.SUNData.MemberApp.Model.MemberModel.PrincipalMemberModel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
@@ -30,6 +31,21 @@ public class PrincipalMemberDTO {
     private String phoneNumber;
 
     private String groupName;
+
+    private RegistrationType registrationType;
+
+    private Long countyId;
+    private String countyName;
+
+    private Long subCountyId;
+    private String subCountyName;
+
+    private Long wardId;
+    private String wardName;
+
+    private Long groupId;
+    private String groupCode;
+
     @NotNull(message = "Principal member must have date of birth")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
@@ -53,6 +69,23 @@ public class PrincipalMemberDTO {
         this.gender = model.getGender();
         this.phoneNumber = model.getPhoneNumber();
         this.groupName = model.getGroupName();
+        this.registrationType = model.getRegistrationType();
+        if (model.getCounty() != null) {
+            this.countyId = model.getCounty().getId();
+            this.countyName = model.getCounty().getName();
+        }
+        if (model.getSubCounty() != null) {
+            this.subCountyId = model.getSubCounty().getId();
+            this.subCountyName = model.getSubCounty().getName();
+        }
+        if (model.getWard() != null) {
+            this.wardId = model.getWard().getId();
+            this.wardName = model.getWard().getName();
+        }
+        if (model.getGroup() != null) {
+            this.groupId = model.getGroup().getId();
+            this.groupCode = model.getGroup().getGroupId();
+        }
         this.dateOfBirth = model.getDateOfBirth();
         this.registrationDate = model.getRegistrationDate();
         this.registeredByName = model.getRegisteredByName();
@@ -71,6 +104,15 @@ public class PrincipalMemberDTO {
 
     public String getPhoneNumber() { return phoneNumber; }
     public String getGroupName() { return groupName; }
+    public RegistrationType getRegistrationType() { return registrationType; }
+    public Long getCountyId() { return countyId; }
+    public String getCountyName() { return countyName; }
+    public Long getSubCountyId() { return subCountyId; }
+    public String getSubCountyName() { return subCountyName; }
+    public Long getWardId() { return wardId; }
+    public String getWardName() { return wardName; }
+    public Long getGroupId() { return groupId; }
+    public String getGroupCode() { return groupCode; }
     public LocalDate getDateOfBirth() { return dateOfBirth; }
 
     public LocalDateTime getRegistrationDate() { return registrationDate; }
@@ -88,6 +130,7 @@ public class PrincipalMemberDTO {
         model.setGender(this.gender);
         model.setPhoneNumber(this.phoneNumber);
         model.setGroupName(this.groupName);
+        model.setRegistrationType(this.registrationType);
         model.setDateOfBirth(this.dateOfBirth); // <-- set it
         return model;
     }
