@@ -18,6 +18,9 @@ public class CountyModel {
     @Column(nullable = false)
     private String name;
 
+    @Column(name = "Region")
+    private String region;
+
     public CountyModel() {}
 
     public Long getId() {
@@ -34,5 +37,13 @@ public class CountyModel {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
     }
 }

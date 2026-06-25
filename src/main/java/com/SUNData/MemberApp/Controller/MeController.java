@@ -48,18 +48,18 @@ public class MeController {
 
         boolean isAdmin = hasAuthority(authentication, "ROLE_ADMIN");
 
-        if (hasAuthority(authentication, Permission.MEMBER_READ)) {
+        if (hasAnyAuthority(authentication, Permission.MEMBER_READ, "ROLE_ADMIN", "ROLE_COORDINATOR", "ROLE_FACILITATOR")) {
             if (!isAdmin) {
                 items.add(new NavigationItemDTO("Dashboard", "layout-dashboard", "/dashboard"));
             }
             items.add(new NavigationItemDTO("Members", "clipboard-list", "/members"));
         }
 
-        if (hasAuthority(authentication, Permission.MEMBER_CREATE)) {
+        if (hasAnyAuthority(authentication, Permission.MEMBER_CREATE, "ROLE_ADMIN", "ROLE_COORDINATOR", "ROLE_FACILITATOR")) {
             items.add(new NavigationItemDTO("Registration", "user-plus", "/register"));
         }
 
-        if (hasAuthority(authentication, Permission.GROUP_READ)) {
+        if (hasAnyAuthority(authentication, Permission.GROUP_READ, "ROLE_ADMIN", "ROLE_COORDINATOR", "ROLE_FACILITATOR")) {
             items.add(new NavigationItemDTO("Groups", "users-round", "/groups"));
         }
 
@@ -113,5 +113,14 @@ public class MeController {
         return authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .anyMatch(authority::equals);
+    }
+
+    private boolean hasAnyAuthority(Authentication authentication, String... authorities) {
+        for (String authority : authorities) {
+            if (hasAuthority(authentication, authority)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

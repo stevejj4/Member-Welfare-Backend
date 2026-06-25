@@ -23,25 +23,29 @@ import java.util.List;
 public class GroupController {
 
     private final GroupService groupService;
+    private static final String GROUP_READ_ACCESS =
+            "hasAnyAuthority('GROUP_READ', 'ROLE_ADMIN', 'ROLE_COORDINATOR', 'ROLE_FACILITATOR')";
+    private static final String GROUP_CREATE_ACCESS =
+            "hasAnyAuthority('GROUP_CREATE', 'ROLE_ADMIN', 'ROLE_COORDINATOR', 'ROLE_FACILITATOR')";
 
     public GroupController(GroupService groupService) {
         this.groupService = groupService;
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('GROUP_CREATE')")
+    @PreAuthorize(GROUP_CREATE_ACCESS)
     public ResponseEntity<MemberGroupDTO> createGroup(@Valid @RequestBody CreateGroupRequestDTO request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(groupService.createGroup(request));
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('GROUP_READ')")
+    @PreAuthorize(GROUP_READ_ACCESS)
     public ResponseEntity<List<MemberGroupDTO>> getGroups(@RequestParam(required = false) Long wardId) {
         return ResponseEntity.ok(groupService.getGroups(wardId));
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('GROUP_READ')")
+    @PreAuthorize(GROUP_READ_ACCESS)
     public ResponseEntity<GroupDetailsDTO> getGroupDetails(@PathVariable Long id) {
         return ResponseEntity.ok(groupService.getGroupDetails(id));
     }

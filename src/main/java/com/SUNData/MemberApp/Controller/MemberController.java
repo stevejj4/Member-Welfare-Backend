@@ -14,20 +14,26 @@ import java.util.List;
 public class MemberController {
 
     private final MemberService memberService;
+    private static final String MEMBER_READ_ACCESS =
+            "hasAnyAuthority('MEMBER_READ', 'ROLE_ADMIN', 'ROLE_COORDINATOR', 'ROLE_FACILITATOR')";
+    private static final String MEMBER_CREATE_ACCESS =
+            "hasAnyAuthority('MEMBER_CREATE', 'ROLE_ADMIN', 'ROLE_COORDINATOR', 'ROLE_FACILITATOR')";
+    private static final String MEMBER_WRITE_ACCESS =
+            "hasAnyAuthority('MEMBER_WRITE', 'ROLE_ADMIN', 'ROLE_COORDINATOR', 'ROLE_FACILITATOR')";
 
     public MemberController(MemberService memberService) {
         this.memberService = memberService;
     }
 
     @PostMapping("/register")
-    @PreAuthorize("hasAuthority('MEMBER_CREATE')")
+    @PreAuthorize(MEMBER_CREATE_ACCESS)
     public ResponseEntity<MemberDetailsDTO> registerMember(
             @Valid @RequestBody RegisterMemberRequestDTO request) {
         return ResponseEntity.ok(memberService.registerMember(request));
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('MEMBER_READ')")
+    @PreAuthorize(MEMBER_READ_ACCESS)
     public ResponseEntity<List<MemberDetailsDTO>> getAllMembers() {
         return ResponseEntity.ok(memberService.getAllMembers());
     }
@@ -41,19 +47,19 @@ public class MemberController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('MEMBER_READ')")
+    @PreAuthorize(MEMBER_READ_ACCESS)
     public ResponseEntity<MemberDetailsDTO> getMemberById(@PathVariable Long id) {
         return ResponseEntity.ok(memberService.getMemberById(id));
     }
 
     @GetMapping("/search/{nationalId}")
-    @PreAuthorize("hasAuthority('MEMBER_READ')")
+    @PreAuthorize(MEMBER_READ_ACCESS)
     public ResponseEntity<MemberDetailsDTO> getMemberByNationalId(@PathVariable String nationalId) {
         return ResponseEntity.ok(memberService.getMemberByNationalId(nationalId));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('MEMBER_WRITE')")
+    @PreAuthorize(MEMBER_WRITE_ACCESS)
     public ResponseEntity<PrincipalMemberDTO> updatePrincipal(
             @PathVariable Long id,
             @Valid @RequestBody PrincipalMemberDTO dto) {
@@ -61,7 +67,7 @@ public class MemberController {
     }
 
     @PatchMapping("/{id}")
-    @PreAuthorize("hasAuthority('MEMBER_WRITE')")
+    @PreAuthorize(MEMBER_WRITE_ACCESS)
     public ResponseEntity<PrincipalMemberDTO> patchPrincipal(
             @PathVariable Long id,
             @Valid @RequestBody PrincipalMemberDTO dto) {
@@ -69,7 +75,7 @@ public class MemberController {
     }
 
     @PatchMapping("/{id}/transfer")
-    @PreAuthorize("hasAuthority('MEMBER_WRITE')")
+    @PreAuthorize(MEMBER_WRITE_ACCESS)
     public ResponseEntity<MemberDetailsDTO> transferMember(
             @PathVariable Long id,
             @Valid @RequestBody TransferMemberRequestDTO request) {
@@ -77,7 +83,7 @@ public class MemberController {
     }
 
     @PutMapping("/{principalId}/next-of-kin")
-    @PreAuthorize("hasAuthority('MEMBER_WRITE')")
+    @PreAuthorize(MEMBER_WRITE_ACCESS)
     public ResponseEntity<NextOfKinDTO> updateNextOfKin(
             @PathVariable Long principalId,
             @Valid @RequestBody NextOfKinDTO dto) {
@@ -85,7 +91,7 @@ public class MemberController {
     }
 
     @PatchMapping("/{principalId}/next-of-kin")
-    @PreAuthorize("hasAuthority('MEMBER_WRITE')")
+    @PreAuthorize(MEMBER_WRITE_ACCESS)
     public ResponseEntity<NextOfKinDTO> patchNextOfKin(
             @PathVariable Long principalId,
             @Valid @RequestBody NextOfKinDTO dto) {
@@ -93,14 +99,14 @@ public class MemberController {
     }
 
     @DeleteMapping("/{principalId}/next-of-kin")
-    @PreAuthorize("hasAuthority('MEMBER_WRITE')")
+    @PreAuthorize(MEMBER_WRITE_ACCESS)
     public ResponseEntity<Void> deleteNextOfKin(@PathVariable Long principalId) {
         memberService.deleteNextOfKin(principalId);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{principalId}/dependants")
-    @PreAuthorize("hasAuthority('MEMBER_WRITE')")
+    @PreAuthorize(MEMBER_WRITE_ACCESS)
     public ResponseEntity<DependantDTO> addDependant(
             @PathVariable Long principalId,
             @Valid @RequestBody DependantDTO dto) {
@@ -108,7 +114,7 @@ public class MemberController {
     }
 
     @PatchMapping("/dependants/{dependantId}")
-    @PreAuthorize("hasAuthority('MEMBER_WRITE')")
+    @PreAuthorize(MEMBER_WRITE_ACCESS)
     public ResponseEntity<DependantDTO> patchDependant(
             @PathVariable Long dependantId,
             @Valid @RequestBody DependantDTO dto) {
@@ -116,7 +122,7 @@ public class MemberController {
     }
 
     @DeleteMapping("/{principalId}/dependants/{dependantId}")
-    @PreAuthorize("hasAuthority('MEMBER_WRITE')")
+    @PreAuthorize(MEMBER_WRITE_ACCESS)
     public ResponseEntity<Void> deleteDependant(
             @PathVariable Long principalId,
             @PathVariable Long dependantId) {
