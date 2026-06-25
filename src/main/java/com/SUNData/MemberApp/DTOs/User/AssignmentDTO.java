@@ -9,6 +9,7 @@ import java.util.List;
 public class AssignmentDTO {
     private UserRole role;
     private Long countyId;
+    private String regionName;
     private String countyName;
     private Long subCountyId;
     private String subCountyName;
@@ -21,6 +22,7 @@ public class AssignmentDTO {
         this.role = user.getRole();
         if (user.getAssignedCounty() != null) {
             this.countyId = user.getAssignedCounty().getId();
+            this.regionName = user.getAssignedCounty().getRegion();
             this.countyName = user.getAssignedCounty().getName();
         }
         if (user.getAssignedSubCounty() != null) {
@@ -33,6 +35,7 @@ public class AssignmentDTO {
 
     public UserRole getRole() { return role; }
     public Long getCountyId() { return countyId; }
+    public String getRegionName() { return regionName; }
     public String getCountyName() { return countyName; }
     public Long getSubCountyId() { return subCountyId; }
     public String getSubCountyName() { return subCountyName; }
