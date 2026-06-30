@@ -4,6 +4,7 @@ A Spring Boot REST API for managing Principal Member registrations as part of th
 
 ## 🚀 Features
 - **Member registration**: Register principal members, next of kin, and dependants.
+- **Member address**: Register member with their native location to ensure easy facilitation and measure growth*
 - **Duplicate checks**: Fast National ID and phone number validation without exposing member records.
 - **Location-aware access**: Members and groups are scoped by county, sub-county, and ward assignments.
 - **Groups**: Create groups per ward and view group stats/members.
