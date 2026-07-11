@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,22 +26,25 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtUtil {
 
-    // 🔹 Secret key for signing JWTs (must be at least 256 bits for HS256).
-    // In production, store this securely (e.g., environment variable).
-    private static final String SECRET = "mySuperSecretKeyForJwtGeneration1234567890";
+    private final String secret;
+    private final long accessExpiration;
+    private final long refreshExpiration;
 
-    // Access token expiration (15 minutes).
-    private static final long ACCESS_EXPIRATION = 1000 * 60 * 15;
-
-    // Refresh token expiration (7 days).
-    private static final long REFRESH_EXPIRATION = 1000L * 60 * 60 * 24 * 7;
+    public JwtUtil(
+            @Value("${app.jwt.secret}") String secret,
+            @Value("${app.jwt.access-expiration-ms}") long accessExpiration,
+            @Value("${app.jwt.refresh-expiration-ms}") long refreshExpiration) {
+        this.secret = secret;
+        this.accessExpiration = accessExpiration;
+        this.refreshExpiration = refreshExpiration;
+    }
 
     /**
      * Returns the signing key used for JWT operations.
      * Converts the secret string into a cryptographic key.
      */
     private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
+        return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
     /**
@@ -51,11 +55,11 @@ public class JwtUtil {
      * @return A signed JWT string.
      */
     public String generateToken(String username, String role) {
-        return buildToken(username, role, ACCESS_EXPIRATION);
+        return buildToken(username, role, accessExpiration);
     }
 
     public String generateRefreshToken(String username, String role) {
-        return buildToken(username, role, REFRESH_EXPIRATION);
+        return buildToken(username, role, refreshExpiration);
     }
 
     private String buildToken(String username, String role, long expirationMs) {

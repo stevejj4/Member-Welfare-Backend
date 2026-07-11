@@ -26,7 +26,7 @@ public class EmailService {
 
     private static final Logger log = LoggerFactory.getLogger(EmailService.class);
 
-    private final JavaMailSender mailSender;              // Spring’s mail sender abstraction
+    private final JavaMailSender mailSender;             // Spring’s mail sender abstraction
     private final SpringTemplateEngine mailTemplateEngine; // Thymeleaf engine for rendering HTML templates
 
     // Configurable properties injected from application.properties or environment variables
